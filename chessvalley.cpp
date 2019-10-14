@@ -5,23 +5,25 @@
 int main(int argc, const char* argv[] ) {
 
     Chessboard *pChessboard = new Chessboard();
+    std::string command;
 
-   pChessboard->printChessboard(); 
+   while (command != "q") {
 
-   std::string *pCommand = new std::string {"huh"};
+       if (pChessboard->isWhitesTurn() ) {
+           std::cout << "give a move command or 'q' to quit" << "\n";
+           pChessboard->printChessboard();
+           std::cin >> command;
+           if ( pChessboard->moveCommand(command) == false && command != "q") {
 
-   while (*pCommand != "q") {
-
-       std::cout << "give a move command or 'q' to quit" << "\n";
-       pChessboard->printChessboard();
-       std::cin >> *pCommand;
-       while ( pChessboard->moveCommand(*pCommand) == false && *pCommand != "q") {
-           std::cout << "false command: " << *pCommand << "\n";
-           std::cin >> *pCommand;
+               std::cout << "false command: " << command << "\n";
+               std::cin >> command;
+           }
+       }
+       else {
+           pChessboard->computerMovesRandomly();
        }
    }
-   
-
+   delete pChessboard;
 
     return EXIT_SUCCESS;
 }
