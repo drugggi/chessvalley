@@ -2,9 +2,17 @@
 #define CHESSBOARD_H
 
 #include <array>
+#include <bitset>
+#include <vector>
+#include "bitboards.h"
+#include "pieceinfo.h"
 
 class Chessboard {
     private:
+        bool whitesTurn = true;
+
+        int highlightSquare = -1;
+        Bitboards* bbs;
         std::array<char,64> SQ = { 'r','n','b','q','k','b','n','r',
                 'p','p','p','p','p','p','p','p',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
@@ -14,23 +22,26 @@ class Chessboard {
                 ' ',' ',' ',' ',' ',' ',' ',' ',
                 'P','P','P','P','P','P','P','P',
                 'R','N','B','Q','K','B','N','R' };
-    char squares[64] = { 'r','n','b','q','k','b','n','r',
-                'p','p','p','p','p','p','p','p',
-                ' ',' ',' ',' ',' ',' ',' ',' ',
-                ' ',' ',' ',' ',' ',' ',' ',' ',
 
-                ' ',' ',' ',' ',' ',' ',' ',' ',
-                ' ',' ',' ',' ',' ',' ',' ',' ',
-                'P','P','P','P','P','P','P','P',
-                'R','N','B','Q','K','B','N','R' };
         void movePiece(char piece, int moveTo);
         void updateBoard(int pieceFrom, int pieceTo);
+        void movePiece(int from, int to);
+        std::vector<PieceInfo> whitePieces;
+        std::vector<PieceInfo> blackPieces;
     public:
         Chessboard();
+        ~Chessboard();
+        int getSquare(std::string coordinate);
         const void printChessboard();
+        const void printBoardPieces();
         bool moveCommand(std::string command);
-        
+        bool isWhitesTurn();
+        void testBitset();
+        int whereIsPiece(char piece); 
+        static std::string coordinate(int square);
 
+        void initializeChessboard(std::array<char,64> newsetup);
+        void computerMovesRandomly();
 };
 
 #endif
