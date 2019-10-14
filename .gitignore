@@ -1,0 +1,8 @@
+# Compiled Object files
+*.o
+
+# swap files
+*.swp
+
+# executable
+chessvalley
