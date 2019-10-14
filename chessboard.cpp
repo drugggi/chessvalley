@@ -13,7 +13,6 @@ Chessboard::Chessboard() {
 
 Chessboard::~Chessboard() {
     delete bbs;
-    std::cout << "bbs deleted";
 }
 void Chessboard::computerMovesRandomly() {
 
@@ -22,7 +21,7 @@ void Chessboard::computerMovesRandomly() {
     std::srand(std::time(nullptr) );
     int random_piece = std::rand() % allPieces;
 
-    std::cout << "pieces.size(): " << allPieces << "  rand: " << random_piece << "\n";
+    // std::cout << "pieces.size(): " << allPieces << "  rand: " << random_piece << "\n";
 
     int idiotCounter = 0;
     while ( random_piece < blackPieces.size() ) {
@@ -49,7 +48,7 @@ void Chessboard::computerMovesRandomly() {
     
     std::vector<int> moves = blackPieces.at(random_piece).getLegalMoveSquares();
     int random_move = std::rand() % moves.size();
-    std::cout << "moves.size(): " << moves.size() << "  rand: " << random_move << "\n";
+    // std::cout << "moves.size(): " << moves.size() << "  rand: " << random_move << "\n";
     movePiece(blackPieces.at(random_piece).getSquare() , moves.at(random_move) );
     
     whitesTurn = true;
@@ -96,13 +95,81 @@ std::string Chessboard::coordinate(int square) {
     std::string coordinate= std::string()+ charFile + charRank;
     return coordinate;
 }
+const void Chessboard::printChessboard() {
 
+    int odd = 0;
+    int square = 0;
+    for (int rank = 0 ; rank < 8 ; rank++) {
+
+        for (int times = 0; times < 3 ; times++) {
+            for (int file = 0 ; file < 8 ; file++) {
+
+                if ( times == 1) {
+                    square = rank * 8 + file;
+                    
+                    if (highlightSquare == square ) {
+                        if (file % 2 == odd) {
+
+                        std::cout << "\033[0;100m  \033[1;32m" << SQ[square] << "   \033[0m";
+                        } else {
+                            std::cout << "  \033[1;32m" << SQ[square] << "   ";
+                        }
+
+                    }
+                    else if ((int)SQ[square] > 96 && (int)SQ[square] < 123 ) {
+                        if (file % 2 == odd) {
+
+                        std::cout << "\033[0;100m  \033[1;31m" << SQ[square] << "   \033[0m";
+                        } else {
+                            std::cout << "  \033[1;31m" << SQ[square] << "   ";
+                        }
+                    }
+                    else {
+
+                        if (file % 2 == odd) {
+
+                        std::cout << "\033[0;100m  " << SQ[square] << "   \033[0m";
+                        } else {
+                            std::cout << "  " << SQ[square] << "   ";
+                        }
+                    }
+                }
+                else {
+                    if (file % 2 == odd) {
+                    std::cout << "\033[0;100m      \033[0m";
+                    } else {
+                        std::cout << "      ";
+                    }
+                }
+            }
+            std::cout << "\n";
+        }
+        if (odd == 0 ) {
+            odd = 1;
+        } else { odd = 0; }
+
+ //       std::cout << "\n";
+
+    }
+}
+/*
 const void Chessboard::printChessboard() {
     // printBoardPieces();
+    printChessboardTest();
 
-    std::cout << "––––– ––––– ––––– ––––– ––––– ––––– ––––– –––––\n";
+    // std::cout << "––––– ––––– ––––– ––––– ––––– ––––– ––––– –––––\n";
+    for (int i = 0 ; i < 8 ; i++ ) {
+        if ( i % 2 == 0 ) {
+            std::cout << "\033[0;100m––––– ";
+        }
+        else {
+            std::cout << "\033[0m––––– ";
+        }
+    }
+    std::cout << "\n";
+    int swap = 0;
     for (int i = 0; i < 64 ; i++ ) {
-        
+      if (i%2 == swap) {std::cout << "\033[0;100m";} else {std::cout << "\033[0m"; }   
         if ( highlightSquare == i ) {
             // cout << "\033[1;31mbold red text\033[0m\n";
             std::cout << " -\033[1;32m" << SQ[i] << "\033[0m-  ";
@@ -117,13 +184,22 @@ const void Chessboard::printChessboard() {
             }
         }
         if ((i+1) % 8 == 0 ) {
-            std::cout << "\n"
-                << "––––– ––––– ––––– ––––– ––––– ––––– ––––– –––––\n";
+            std::cout << "\n";
+            for (int i = 0 ; i < 8 ; i++ ) {
+                if ( i % 2 == 0 ) {
+                    std::cout << "\033[0;100m––––– ";
+                }
+                else {
+                    std::cout << "\033[0m––––– ";
+                }
+            }
+            std::cout << "\n";
         }
 
     }
 
 }
+*/
 bool Chessboard::moveCommand(std::string command) {
 
     int square = getSquare(command);
@@ -278,22 +354,6 @@ int Chessboard::whereIsPiece(char piece) {
     }
     return 0;
 }
-/*
-void Chessboard::testBitset() {
-
-    std::bitset<64> occupiedSquares;
-    std::bitset<64> test(std::string( "1111111111111111000000000000000000000000000000001111111111111111"));
-    std::cout << occupiedSquares << "\n";
-
-    for (int i = 0 ; i < 63 ; i++ ) {
-        std::cout << test[i];
-        if ((i+1) % 8 == 0 ) {
-            std::cout << "\n";
-        }
-    }
-
-}
-*/
 void Chessboard::updateBoard(int pieceFrom, int pieceTo) {
     if (pieceFrom < 0 || pieceTo > 63) {
         std::cout << "ERROR movePiece out of bounds: " << pieceFrom << " " << pieceTo << "\n";

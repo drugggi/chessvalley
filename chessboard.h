@@ -33,6 +33,7 @@ class Chessboard {
         ~Chessboard();
         int getSquare(std::string coordinate);
         const void printChessboard();
+        const void printChessboardTest();
         const void printBoardPieces();
         bool moveCommand(std::string command);
         bool isWhitesTurn();
