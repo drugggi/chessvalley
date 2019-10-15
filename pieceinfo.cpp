@@ -13,6 +13,9 @@ PieceInfo::PieceInfo(char p, int s) {
 PieceInfo::~PieceInfo() {
 
 }
+char PieceInfo::getPiece() {
+    return piece;
+}
 int PieceInfo::getSquare() {
     return square;
 }

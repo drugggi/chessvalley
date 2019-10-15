@@ -10,6 +10,9 @@
 class Chessboard {
     private:
         bool whitesTurn = true;
+        int enpassant = 0;
+        bool castledKingside = false;
+        bool castledQueenside = false;
 
         int highlightSquare = -1;
         Bitboards* bbs;
@@ -38,7 +41,7 @@ class Chessboard {
         const void printMoveHistory();
         bool moveCommand(std::string command);
         bool isWhitesTurn();
-        void testBitset();
+        // void testBitset();
         int whereIsPiece(char piece); 
         static std::string coordinate(int square);
 

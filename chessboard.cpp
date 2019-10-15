@@ -7,7 +7,7 @@
 #include "bitboards.h"
 
 Chessboard::Chessboard() {
-    bbs = new Bitboards(SQ);    
+    bbs = new Bitboards(SQ,whitesTurn);    
     initializeChessboard(SQ);
 }
 
@@ -59,7 +59,7 @@ void Chessboard::initializeChessboard(std::array<char,64> newsetup) {
     blackPieces.clear();
     SQ = newsetup;
     delete bbs;
-    bbs = new Bitboards(SQ);
+    bbs = new Bitboards(SQ,whitesTurn);
     for (int i = 0 ; i < SQ.size() ; i++) {
           if ( SQ[i] != ' ' ) {
 
@@ -232,7 +232,6 @@ bool Chessboard::moveCommand(std::string command) {
     else if (highlightSquare != -1) {
         std::cout << "move command from: "<< highlightSquare << " to: " << square << "\n";
         std::bitset<64> legalMoves = bbs->getLegalMoves(highlightSquare, SQ[highlightSquare]);
-        bbs->printBitboard(legalMoves);
         if ( legalMoves[square] == 1 ) {
             movePiece(highlightSquare,square);
             whitesTurn = false;
@@ -257,10 +256,21 @@ bool Chessboard::moveCommand(std::string command) {
     return true;
 }
 void Chessboard::movePiece(int from, int to) {
+    
+    char tempChar = SQ[to];
     SQ[to] = SQ[from];
     SQ[from] = ' ';
+    
+    Bitboards temp {SQ,whitesTurn};
+    if (temp.isBlackKingInCheck() ||temp.isWhiteKingInCheck() ) {
+        std::cout << "some king is in check"  << "\n";
+//        SQ[from] = SQ[to];
+ //       SQ[to] = tempChar;
+  //     return; 
+    }
     delete bbs;
-    bbs = new Bitboards(SQ);
+
+    bbs = new Bitboards(SQ,whitesTurn);
     initializeChessboard(SQ);
     moveHistory.push_back(from);
     moveHistory.push_back(to);
@@ -395,6 +405,6 @@ void Chessboard::updateBoard(int pieceFrom, int pieceTo) {
     SQ[pieceTo] = pieceMoving;
 
     delete bbs;
-    bbs = new Bitboards(SQ);
+    bbs = new Bitboards(SQ,whitesTurn);
 
 }
