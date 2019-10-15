@@ -28,13 +28,14 @@ class Chessboard {
         void movePiece(int from, int to);
         std::vector<PieceInfo> whitePieces;
         std::vector<PieceInfo> blackPieces;
+        std::vector<int> moveHistory;
     public:
         Chessboard();
         ~Chessboard();
         int getSquare(std::string coordinate);
         const void printChessboard();
-        const void printChessboardTest();
         const void printBoardPieces();
+        const void printMoveHistory();
         bool moveCommand(std::string command);
         bool isWhitesTurn();
         void testBitset();

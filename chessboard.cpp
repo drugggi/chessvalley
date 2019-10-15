@@ -103,7 +103,7 @@ const void Chessboard::printChessboard() {
     int square = 0;
     // chess board ranks 1-8
     for (int rank = 0 ; rank < 8 ; rank++) {
-        // chess board files A-H, every file has consists of three console rows
+        // chess board files A-H, every file consists of three console rows
         for (int row = 0; row < 3 ; row++) {
             for (int file = 0 ; file < 8 ; file++) {
                 // piece info (char) into middle of square
@@ -219,6 +219,10 @@ bool Chessboard::moveCommand(std::string command) {
     int square = getSquare(command);
   //  std::cout << command << " and square: " << square << "\n";
 
+    if (command == "history") {
+        printMoveHistory();
+        return false;
+    }
     if (square < 0 || square > 63) {
         return false;
     }
@@ -258,6 +262,8 @@ void Chessboard::movePiece(int from, int to) {
     delete bbs;
     bbs = new Bitboards(SQ);
     initializeChessboard(SQ);
+    moveHistory.push_back(from);
+    moveHistory.push_back(to);
 }
 bool Chessboard::isWhitesTurn() {
     return whitesTurn;
@@ -274,6 +280,20 @@ int Chessboard::getSquare(std::string coordinate) {
 
  //       std::cout << "square: " << (rankNro * 8 + fileNro) << "\n";
         return (rankNro * 8 + fileNro);
+    }
+
+}
+
+const void Chessboard::printMoveHistory() {
+    for (int i = 0 ; i < moveHistory.size() ; i++) {
+        std::cout << coordinate(moveHistory.at(i)) << "->";
+        i++;
+        std::cout << coordinate(moveHistory.at(i)) << "  |  ";
+        i++;
+        if (i >= moveHistory.size()) {break; }
+        std::cout << coordinate(moveHistory.at(i)) << "->";
+        i++;
+        std::cout << coordinate(moveHistory.at(i)) << "\n";
     }
 
 }
@@ -321,7 +341,7 @@ bool Chessboard::moveCommand(std::string command) {
     movePiece(pieceToMove, moveTo);
     return true;
 }
-*/
+
 void Chessboard::movePiece(char piece, int moveTo) {
     std::cout << piece << " moves to square: " << moveTo << "\n";
 
@@ -356,10 +376,8 @@ void Chessboard::movePiece(char piece, int moveTo) {
         }
     }
 
-
-
-
 }
+*/
 int Chessboard::whereIsPiece(char piece) {
     for (int i = 0 ; i < SQ.size() ; i++) {
         if (SQ.at(i) == piece) {
