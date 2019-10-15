@@ -45,7 +45,8 @@ void Chessboard::computerMovesRandomly() {
             return;
         }
     }
-    
+    std::cout << "values W: " << bbs->countWhiteMaterial() << " B: " 
+        << bbs->countBlackMaterial() << "\n";    
     std::vector<int> moves = blackPieces.at(random_piece).getLegalMoveSquares();
     int random_move = std::rand() % moves.size();
     // std::cout << "moves.size(): " << moves.size() << "  rand: " << random_move << "\n";

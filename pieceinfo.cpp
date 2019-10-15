@@ -7,11 +7,25 @@
 PieceInfo::PieceInfo(char p, int s) {
     piece = p;
     square = s;
-
+    if (p == 'p' || p == 'P' ||p == 'k' || p == 'K') {
+        value = 1;
+    }
+    else if (p == 'b' ||p == 'B' || p == 'n' ||p == 'N') {
+        value = 3;
+    }
+    else if (p == 'r' ||p == 'R') {
+        value = 4;
+    }
+    else if (p == 'q' ||p == 'Q') {
+        value = 6;
+    }
 }
 
 PieceInfo::~PieceInfo() {
 
+}
+int PieceInfo::getValue() {
+    return value;
 }
 char PieceInfo::getPiece() {
     return piece;

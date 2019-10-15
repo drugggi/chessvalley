@@ -29,6 +29,8 @@ class Bitboards {
         void printBitboard(std::bitset<64> pb);
         const bool isBlackKingInCheck();
         const bool isWhiteKingInCheck();
+        const int countWhiteMaterial();
+        const int countBlackMaterial();
         std::bitset<64> getLegalMoves(int square, char piece);
         std::bitset<64> getAttackingMoves(int square, char piece);
 

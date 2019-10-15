@@ -57,6 +57,20 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
     */
 }
 
+const int Bitboards::countBlackMaterial() {
+    int value = 0;
+    for (int i = 0 ; i < blackPiecesPI.size() ; i++) {
+        value += blackPiecesPI.at(i).getValue();
+    }
+    return value;
+}
+const int Bitboards::countWhiteMaterial() {
+    int value = 0;
+    for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
+        value += whitePiecesPI.at(i).getValue();
+    }
+    return value;
+}
 const bool Bitboards::isBlackKingInCheck() {
     for (int i = 0 ; i < blackPiecesPI.size() ; i++ ) {
         if (blackPiecesPI.at(i).getPiece() == 'k' ) {

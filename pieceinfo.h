@@ -10,6 +10,7 @@ class PieceInfo {
         char piece;
         int square;
         std::bitset<64> legalMoves;
+        int value;
 
     public:
         PieceInfo(char p,int s);
@@ -19,6 +20,7 @@ class PieceInfo {
         void printLegalMoveCoordinates();
         int getSquare();
         char getPiece();
+        int getValue();
         std::bitset<64> getLegalMoves();
         std::vector<int> getLegalMoveSquares();
 
