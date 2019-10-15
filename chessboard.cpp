@@ -97,40 +97,54 @@ std::string Chessboard::coordinate(int square) {
 }
 const void Chessboard::printChessboard() {
 
+    // printing chessboard, first row starts with white squre
+    // next row starts with black square, odd variable takes care of that
     int odd = 0;
     int square = 0;
+    // chess board ranks 1-8
     for (int rank = 0 ; rank < 8 ; rank++) {
-
-        for (int times = 0; times < 3 ; times++) {
+        // chess board files A-H, every file has consists of three console rows
+        for (int row = 0; row < 3 ; row++) {
             for (int file = 0 ; file < 8 ; file++) {
-
-                if ( times == 1) {
+                // piece info (char) into middle of square
+                if ( row == 1) {
                     square = rank * 8 + file;
+                    char piece = SQ[square];
+                    if( (int) SQ[square] >= (int)'a') {
+                        piece = SQ[square]-32;
+                    }
+                    // no need to keep black pieces undercase, black pieces are represented as red
+                    std::string p = std::string() + piece + piece;
+                    if (SQ[square] == 'p' || SQ[square] == 'P') {
+                        p =std::string() +  piece +" ";
+                    }
                     
+                    // piece that user has selected is represented as green color
                     if (highlightSquare == square ) {
                         if (file % 2 == odd) {
 
-                        std::cout << "\033[0;100m  \033[1;32m" << SQ[square] << "   \033[0m";
+                        std::cout << "\033[0;100m  \033[1;32m" << p << "  \033[0m";
                         } else {
-                            std::cout << "  \033[1;32m" << SQ[square] << "   ";
+                            std::cout << "  \033[1;32m" << p << "  ";
                         }
 
                     }
+                    // black piece (red color)
                     else if ((int)SQ[square] > 96 && (int)SQ[square] < 123 ) {
                         if (file % 2 == odd) {
 
-                        std::cout << "\033[0;100m  \033[1;31m" << SQ[square] << "   \033[0m";
+                        std::cout << "\033[0;100m  \033[1;31m" << p << "  \033[0m";
                         } else {
-                            std::cout << "  \033[1;31m" << SQ[square] << "   ";
+                            std::cout << "  \033[1;31m" << p << "  ";
                         }
-                    }
+                    } // white piece (white color)
                     else {
 
                         if (file % 2 == odd) {
 
-                        std::cout << "\033[0;100m  " << SQ[square] << "   \033[0m";
+                        std::cout << "\033[0;100m  " << p << "  \033[0m";
                         } else {
-                            std::cout << "  " << SQ[square] << "   ";
+                            std::cout << "  " << p << "  ";
                         }
                     }
                 }
