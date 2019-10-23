@@ -4,6 +4,17 @@
 #include <vector>
 #include "bitboards.h"
 #include "pieceinfo.h"
+#include "chessboard.h"
+
+Bitboards::Bitboards(std::vector<PieceInfo> wpPI, std::vector<PieceInfo> bpPI, bool whiteToMove) {
+
+    if (whiteToMove) {
+        std::cout << "new bitboards constructor, white to move" << "\n";
+    } else {
+        std::cout << "new bitboard constructor, black to move" << "\n";
+    }
+
+}
 
 Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
     
@@ -46,6 +57,65 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         }
        
     }
+    std::cout << "size" << whitePiecesPI.size() << "\n";
+    int whiteKingSquare;
+    for (auto p : whitePiecesPI ) {
+        if (p.getPiece() == 'K' ) {
+            whiteKingSquare = p.getSquare();
+            break;
+        }
+
+    }
+    std::cout << "white King is at: " << whiteKingSquare << "\n";
+    if (whiteToMove) {
+        // create bitboards for whitePieces and blackPieces 
+        std::bitset<64> tempPiecemoves;
+        for (auto p : whitePiecesPI) {
+            tempPiecemoves = p.getLegalMoves();
+
+            // this goes through all 64 squares, optimize this please
+            for (int i = 0 ; i < tempPiecemoves.size() ; i++ ) {
+
+                // for every move there is, check if your own king is in check thus
+                // making the move illegal 
+                if (tempPiecemoves[i] == 1 ) {
+
+                    int startingSquare = p.getSquare();
+                    p.setSquare(i);
+
+                    whitePieces[startingSquare] = 0;
+                    whitePieces[i] = 1;
+                   if (isWhiteKingInCheck(whiteKingSquare) ) {
+                       std::cout << "WhiteKingInChes!" << "\n";
+                       std::cout << tempPiecemoves << "\n";
+                      tempPiecemoves[i] = 0;
+                      std::cout << tempPiecemoves << "\n";
+                   }
+                   whitePieces[startingSquare] = 1;
+                   whitePieces[i] = 0;
+                   p.setSquare(startingSquare);
+
+
+                    std::cout << "test this move: " << Chessboard::coordinate(p.getSquare() )
+                        << " to "
+                        << i << ":" << Chessboard::coordinate(i) << "\n";
+                    Bitboards isKingInCheck {whitePiecesPI, blackPiecesPI, whiteToMove};
+
+
+                }
+
+                
+            }
+    //        std::cout << tempPiecemoves;
+
+     //       p.printPieceInfo();
+        }
+
+    }
+    else {
+
+        // black to move
+    }
 //    printBitboard(blackAttacking);
  //   printBitboard(whiteAttacking);
     /*if (isBlackKingInCheck() ) {
@@ -71,7 +141,7 @@ const int Bitboards::countWhiteMaterial() {
     }
     return value;
 }
-const bool Bitboards::isBlackKingInCheck() {
+bool Bitboards::isBlackKingInCheck() {
     for (int i = 0 ; i < blackPiecesPI.size() ; i++ ) {
         if (blackPiecesPI.at(i).getPiece() == 'k' ) {
             int kingSquare = blackPiecesPI.at(i).getSquare();
@@ -85,8 +155,15 @@ const bool Bitboards::isBlackKingInCheck() {
 
     }
 }
-const bool Bitboards::isWhiteKingInCheck() {
+bool Bitboards::isWhiteKingInCheck(int kingSquare) {
 
+    std::bitset<64> checkBlackRookThreat = getWhiteRookMoves(kingSquare);
+
+    std::cout << "isWhiteKingInChes(" << kingSquare << ")\n";
+
+    std::cout << "blackRookEndOfThis?: " << checkBlackRookThreat << "\n";
+
+    /*
     for (int i = 0 ; i < whitePiecesPI.size() ; i++ ) {
         if (whitePiecesPI.at(i).getPiece() == 'K' ) {
             int kingSquare = whitePiecesPI.at(i).getSquare();
@@ -99,7 +176,11 @@ const bool Bitboards::isWhiteKingInCheck() {
         }
 
     }
+
+    */
+    return false;
 }
+
 
 
 

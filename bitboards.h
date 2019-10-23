@@ -26,9 +26,10 @@ class Bitboards {
      //   std::bitset<64> whitePawn;
     public:
         Bitboards(std::array<char,64> SQ,bool whiteToMove);
+        Bitboards(std::vector<PieceInfo> wpPI, std::vector<PieceInfo> bpPI,bool whiteToMove);
         void printBitboard(std::bitset<64> pb);
-        const bool isBlackKingInCheck();
-        const bool isWhiteKingInCheck();
+        bool isBlackKingInCheck();
+        bool isWhiteKingInCheck(int kingSquare);
         const int countWhiteMaterial();
         const int countBlackMaterial();
         std::bitset<64> getLegalMoves(int square, char piece);

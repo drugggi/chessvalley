@@ -33,6 +33,9 @@ char PieceInfo::getPiece() {
 int PieceInfo::getSquare() {
     return square;
 }
+void PieceInfo::setSquare(int newSquare) {
+    square = newSquare;
+}
 
 void PieceInfo::setLegalMoves(std::bitset<64> lm) {
     legalMoves = lm;
