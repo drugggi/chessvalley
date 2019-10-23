@@ -263,13 +263,16 @@ void Chessboard::movePiece(int from, int to) {
     SQ[from] = ' ';
     
     Bitboards temp {SQ,whitesTurn};
+    /*
     if (temp.isBlackKingInCheck() ||temp.isWhiteKingInCheck() ) {
         std::cout << "some king is in check"  << "\n";
 //        SQ[from] = SQ[to];
  //       SQ[to] = tempChar;
   //     return; 
     }
+    */
     delete bbs;
+    
 
     bbs = new Bitboards(SQ,whitesTurn);
     initializeChessboard(SQ);

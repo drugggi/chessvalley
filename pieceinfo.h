@@ -19,6 +19,7 @@ class PieceInfo {
         void printPieceInfo();
         void printLegalMoveCoordinates();
         int getSquare();
+        void setSquare(int newSquare);
         char getPiece();
         int getValue();
         std::bitset<64> getLegalMoves();
