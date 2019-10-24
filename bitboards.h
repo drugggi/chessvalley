@@ -29,6 +29,7 @@ class Bitboards {
         bool isWhiteKingInCheck();
         const int countWhiteMaterial();
         const int countBlackMaterial();
+        const int countMaterial();
         std::bitset<64> getLegalMoves(int square);
         std::bitset<64> getLegalMoves(int square, char piece);
         std::bitset<64> getAttackingMoves(int square, char piece);

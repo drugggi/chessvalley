@@ -2,14 +2,14 @@
 CC=g++
 CFLAGS=-c
 
-DEPS = chessboard.h bitboards.h pieceinfo.h
-OBJ = chessvalley.o chessboard.o bitboards.o pieceinfo.o
+DEPS = chessboard.h bitboards.h pieceinfo.h search.h
+OBJ = chessvalley.o chessboard.o bitboards.o pieceinfo.o search.o
 
 %.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $<
 
-chessvalley: chessvalley.o chessboard.o bitboards.o pieceinfo.o
-	$(CC) chessvalley.o chessboard.o bitboards.o pieceinfo.o -o chessvalley
+chessvalley: chessvalley.o chessboard.o bitboards.o pieceinfo.o search.o
+	$(CC) chessvalley.o chessboard.o bitboards.o pieceinfo.o search.o -o chessvalley
 
 
 # chessvalley is the "target" and after ": " are the dependencies and next line after <Tab> is the command

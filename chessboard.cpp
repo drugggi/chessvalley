@@ -5,25 +5,37 @@
 #include <ctime>
 #include "chessboard.h"
 #include "bitboards.h"
+#include "search.h"
 
 Chessboard::Chessboard() {
     bbs = new Bitboards(SQ,whitesTurn);    
-    initializeChessboard(SQ);
 }
 
 Chessboard::~Chessboard() {
     delete bbs;
 }
+void Chessboard::computerMovesNonRandomly() {
+
+    /*
+    std::vector<PieceInfo> blackPieces = bbs->getBlackPieces();
+
+    for (int i = 0 ; i < blackPieces.size() ; i++) {
+        if (blackPieces.at(i).getLegalMoves().any() ) {
+            std::vector<int> moves = blackPieces.at(i).getLegalMoveSquares();
+                
+            blackPieces.at(i).printPieceInfo();
+        }
+    }
+*/
+    Search findBestMove {SQ,whitesTurn};
+    
+    movePiece(findBestMove.getMoveFrom() , findBestMove.getMoveTo() );
+    
+    whitesTurn = true;
+    // computerMovesRandomly();
+}
 void Chessboard::computerMovesRandomly() {
 
-   /* 
-    std::vector<PieceInfo> testgetpieces = bbs->getBlackPieces();
-    std::cout << "test begins" << "\n";
-    for (int i = 0; i < testgetpieces.size() ; i++) {
-        testgetpieces.at(i).printPieceInfo();
-    }
-    std::cout << "test ends" << "\n";
-   */ 
     std::vector<PieceInfo> blackPieces = bbs->getBlackPieces();
     int allPieces = blackPieces.size();
 
@@ -61,30 +73,6 @@ void Chessboard::computerMovesRandomly() {
     movePiece(blackPieces.at(random_piece).getSquare() , moves.at(random_move) );
     
     whitesTurn = true;
-}
-void Chessboard::initializeChessboard(std::array<char,64> newsetup) {
-
-    //whitePieces.clear();
-    //blackPieces.clear();
-   // SQ = newsetup;
-   // delete bbs;
-   // bbs = new Bitboards(SQ,whitesTurn);
-    /*
-    for (int i = 0 ; i < SQ.size() ; i++) {
-          if ( SQ[i] != ' ' ) {
-
-              PieceInfo temp {SQ[i] , i };
-              temp.setLegalMoves( bbs->getLegalMoves(i,SQ[i]) );
-              if ( (int)SQ[i] < ((int)'a') ) {
-     //             whitePieces.push_back(temp);
-              }
-              else {
-      //            blackPieces.push_back(temp);
-              }
-          } 
-    }
-    */
-
 }
 const void Chessboard::printBoardPieces() {
     std::vector<PieceInfo> whitePieces = bbs->getWhitePieces();
@@ -179,54 +167,6 @@ const void Chessboard::printChessboard() {
 
     }
 }
-/*
-const void Chessboard::printChessboard() {
-    // printBoardPieces();
-    printChessboardTest();
-
-    // std::cout << "––––– ––––– ––––– ––––– ––––– ––––– ––––– –––––\n";
-    for (int i = 0 ; i < 8 ; i++ ) {
-        if ( i % 2 == 0 ) {
-            std::cout << "\033[0;100m––––– ";
-        }
-        else {
-            std::cout << "\033[0m––––– ";
-        }
-    }
-    std::cout << "\n";
-    int swap = 0;
-    for (int i = 0; i < 64 ; i++ ) {
-      if (i%2 == swap) {std::cout << "\033[0;100m";} else {std::cout << "\033[0m"; }   
-        if ( highlightSquare == i ) {
-            // cout << "\033[1;31mbold red text\033[0m\n";
-            std::cout << " -\033[1;32m" << SQ[i] << "\033[0m-  ";
-            //std::cout << " -" << SQ[i] << "-  ";
-        }
-        else {
-            if ((int)SQ[i] > 96 && (int)SQ[i] < 123 ) {
-
-                std::cout << "| \033[1;31m"<< SQ[i] << "\033[0m | ";
-            } else {
-        std::cout << "| "<< SQ[i] << " | ";
-            }
-        }
-        if ((i+1) % 8 == 0 ) {
-            std::cout << "\n";
-            for (int i = 0 ; i < 8 ; i++ ) {
-                if ( i % 2 == 0 ) {
-                    std::cout << "\033[0;100m––––– ";
-                }
-                else {
-                    std::cout << "\033[0m––––– ";
-                }
-            }
-            std::cout << "\n";
-        }
-
-    }
-
-}
-*/
 bool Chessboard::moveCommand(std::string command) {
 
     int square = getSquare(command);
@@ -290,7 +230,6 @@ void Chessboard::movePiece(int from, int to) {
     // !whitesTurn seems to be working so far
     delete bbs;
      bbs = new Bitboards(SQ,!whitesTurn);
-    // initializeChessboard(SQ);
     moveHistory.push_back(from);
     moveHistory.push_back(to);
 }

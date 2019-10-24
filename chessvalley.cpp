@@ -20,7 +20,7 @@ int main(int argc, const char* argv[] ) {
            }
        }
        else {
-           pChessboard->computerMovesRandomly();
+           pChessboard->computerMovesNonRandomly();
        }
    }
    delete pChessboard;

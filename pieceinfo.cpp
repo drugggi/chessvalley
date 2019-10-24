@@ -42,7 +42,7 @@ void PieceInfo::setLegalMoves(std::bitset<64> lm) {
 }
 
 void PieceInfo::setLegalMove(int moveSquare, bool allowed) {
-    std::cout << piece << Chessboard::coordinate(moveSquare) << " reverted\n";
+//    std::cout << piece << Chessboard::coordinate(moveSquare) << " reverted\n";
     if (allowed) {
         legalMoves[moveSquare] = 1;
     }

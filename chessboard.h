@@ -52,8 +52,8 @@ class Chessboard {
         int whereIsPiece(char piece); 
         static std::string coordinate(int square);
 
-        void initializeChessboard(std::array<char,64> newsetup);
         void computerMovesRandomly();
+        void computerMovesNonRandomly();
 };
 
 #endif

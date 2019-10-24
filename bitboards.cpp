@@ -18,13 +18,13 @@ Bitboards::Bitboards(std::vector<PieceInfo> wpPI, std::vector<PieceInfo> bpPI, b
 
 Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
     charBoard = pieceBoard;
-    
+/*    
     if(whiteToMove) {
         std::cout << "it is white's turn" << "\n";
     } else {
         std::cout << "it is black's turn" << "\n";
     }
-
+*/
     // create bitboards for white/blac pieces from char board
     for (int i = 0; i < 64 ; i++ ) {
         whitePieces[i] = 0;
@@ -58,7 +58,7 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         }
        
     }
-    std::cout << "white to move: " << whiteToMove << "\n";
+//    std::cout << "white to move: " << whiteToMove << "\n";
     if (whiteToMove) {
         // create bitboards for whitePieces and blackPieces 
         std::bitset<64> tempPiecemoves;
@@ -141,17 +141,17 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
     if (whiteToMove) {
     for (int i = 0; i < whitePiecesPI.size() ; i++  ) {
         tempLegalmoves = tempLegalmoves |= whitePiecesPI.at(i).getLegalMoves();
-        whitePiecesPI.at(i).printPieceInfo();
+//        whitePiecesPI.at(i).printPieceInfo();
     }
     std::cout <<"\n";
     } else {
     for (int i = 0; i < blackPiecesPI.size() ; i++) {
         tempLegalmoves = tempLegalmoves |= blackPiecesPI.at(i).getLegalMoves();
-        blackPiecesPI.at(i).printPieceInfo();
+ //       blackPiecesPI.at(i).printPieceInfo();
     }
     std::cout << "\n";
     }
-    printBitboard(tempLegalmoves);
+  //  printBitboard(tempLegalmoves);
     if ( tempLegalmoves.any() == false ) {
         std::cout << "no legal moves" << "\n";
     
@@ -168,6 +168,9 @@ std::vector<PieceInfo> Bitboards::getWhitePieces() {
 }
 std::vector<PieceInfo> Bitboards::getBlackPieces() {
     return blackPiecesPI;
+}
+const int Bitboards::countMaterial() {
+    return countWhiteMaterial() - countBlackMaterial();
 }
 const int Bitboards::countBlackMaterial() {
     int value = 0;
