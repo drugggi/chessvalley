@@ -24,7 +24,7 @@ PieceInfo::PieceInfo(char p, int s) {
 PieceInfo::~PieceInfo() {
 
 }
-int PieceInfo::getValue() {
+float PieceInfo::getValue() {
     return value;
 }
 char PieceInfo::getPiece() {

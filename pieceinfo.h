@@ -10,7 +10,7 @@ class PieceInfo {
         char piece;
         int square;
         std::bitset<64> legalMoves;
-        int value;
+        float value;
 
     public:
         PieceInfo(char p,int s);
@@ -22,7 +22,7 @@ class PieceInfo {
         int getSquare();
         void setSquare(int newSquare);
         char getPiece();
-        int getValue();
+        float getValue();
         std::bitset<64> getLegalMoves();
         std::vector<int> getLegalMoveSquares();
 

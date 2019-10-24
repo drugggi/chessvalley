@@ -1,4 +1,4 @@
- #ifndef BITBOARDS_H
+#ifndef BITBOARDS_H
 #define BITBOARDS_H
 
 #include <array>
@@ -27,9 +27,12 @@ class Bitboards {
         void printBitboard(std::bitset<64> pb);
         bool isBlackKingInCheck();
         bool isWhiteKingInCheck();
-        const int countWhiteMaterial();
-        const int countBlackMaterial();
-        const int countMaterial();
+        const float countWhiteMaterial();
+        const float countBlackMaterial();
+        const float countMaterial();
+        const float countBlackAttackingSquares();
+        const float countWhiteAttackingSquares();
+        const float countAttackingSquares();
         std::bitset<64> getLegalMoves(int square);
         std::bitset<64> getLegalMoves(int square, char piece);
         std::bitset<64> getAttackingMoves(int square, char piece);

@@ -169,18 +169,38 @@ std::vector<PieceInfo> Bitboards::getWhitePieces() {
 std::vector<PieceInfo> Bitboards::getBlackPieces() {
     return blackPiecesPI;
 }
-const int Bitboards::countMaterial() {
+const float Bitboards::countAttackingSquares() {
+    return countWhiteAttackingSquares() - countBlackAttackingSquares();
+}
+const float Bitboards::countBlackAttackingSquares() {
+
+    std::bitset<64> blackAttacking;
+    for (int i = 0 ; i < blackPiecesPI.size() ; i++) {
+        blackAttacking = blackAttacking |= blackPiecesPI.at(i).getLegalMoves();
+    }
+    return -(float)blackAttacking.count()/100;
+}
+const float Bitboards::countWhiteAttackingSquares() {
+
+    std::bitset<64> whiteAttacking;
+    for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
+        whiteAttacking = whiteAttacking |= whitePiecesPI.at(i).getLegalMoves();
+    }
+    return (float)whiteAttacking.count()/100;
+}
+
+const float Bitboards::countMaterial() {
     return countWhiteMaterial() - countBlackMaterial();
 }
-const int Bitboards::countBlackMaterial() {
-    int value = 0;
+const float Bitboards::countBlackMaterial() {
+    float value = 0;
     for (int i = 0 ; i < blackPiecesPI.size() ; i++) {
         value += blackPiecesPI.at(i).getValue();
     }
     return value;
 }
-const int Bitboards::countWhiteMaterial() {
-    int value = 0;
+const float Bitboards::countWhiteMaterial() {
+    float value = 0;
     for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
         value += whitePiecesPI.at(i).getValue();
     }
