@@ -46,12 +46,12 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         if (pieceBoard.at(i) != ' ') {
             PieceInfo temp {pieceBoard.at(i) , i };
             if ((int)pieceBoard.at(i) < (int)'a') {
-               whiteAttacking = whiteAttacking |= getAttackingMoves(i,pieceBoard.at(i) );
+               // whiteAttacking = whiteAttacking |= getAttackingMoves(i,pieceBoard.at(i) );
                temp.setLegalMoves( getAttackingMoves(i,pieceBoard.at(i) ) );
                whitePiecesPI.push_back(temp);
             }
             else {
-                blackAttacking = blackAttacking |= getAttackingMoves(i,pieceBoard.at(i) );
+               // blackAttacking = blackAttacking |= getAttackingMoves(i,pieceBoard.at(i) );
                 temp.setLegalMoves( getAttackingMoves(i,pieceBoard.at(i) ) );
                 blackPiecesPI.push_back(temp);
             }
@@ -82,24 +82,14 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
                     whitePieces[startingSquare] = 0;
                     whitePieces[i] = 1;
                    if (isWhiteKingInCheck() ) {
-                       std::cout << "WhiteKingInChes!" << "\n";
                       tempPiecemoves[i] = 0;
                       whitePiecesPI.at(j).setLegalMove(i, false);
-//            printBitboard(tempPiecemoves);
- //           printBitboard(p.getLegalMoves() );
                    }
                    whitePieces[startingSquare] = 1;
                    whitePieces[i] = 0;
                    whitePiecesPI.at(j).setSquare(startingSquare);
                    charBoard[startingSquare] = piecemoving;
                    charBoard[i] = temppiece;
-
-/*
-                    std::cout << "test this move: " << Chessboard::coordinate(p.getSquare() )
-                        << " to "
-                        << i << ":" << Chessboard::coordinate(i) << "\n";
-                    Bitboards isKingInCheck {whitePiecesPI, blackPiecesPI, whiteToMove};
-*/
 
                 }
 
@@ -111,9 +101,44 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         }
 
     }
-    else {
+    else { // black to move
+        // create bitboards for whitePieces and blackPieces 
+        std::bitset<64> tempPiecemoves;
+        for (int j = 0 ; j < blackPiecesPI.size() ; j++) {
+            tempPiecemoves = blackPiecesPI.at(j).getLegalMoves();
 
-        // black to move
+            // this goes through all 64 squares, optimize this please
+            for (int i = 0 ; i < tempPiecemoves.size() ; i++ ) {
+
+                // for every move there is, check if your own king is in check thus
+                // making the move illegal 
+                if (tempPiecemoves[i] == 1 ) {
+
+                    char piecemoving = blackPiecesPI.at(j).getPiece();
+                    int startingSquare = blackPiecesPI.at(j).getSquare();
+                    char temppiece = charBoard[i];
+                    blackPiecesPI.at(j).setSquare(i);
+                    charBoard[startingSquare] = ' ';
+                    charBoard[i]=piecemoving;
+
+                    blackPieces[startingSquare] = 0;
+                    blackPieces[i] = 1;
+                   if (isBlackKingInCheck() ) {
+                      tempPiecemoves[i] = 0;
+                      blackPiecesPI.at(j).setLegalMove(i, false);
+                   }
+                   blackPieces[startingSquare] = 1;
+                   blackPieces[i] = 0;
+                   blackPiecesPI.at(j).setSquare(startingSquare);
+                   charBoard[startingSquare] = piecemoving;
+                   charBoard[i] = temppiece;
+
+                }
+
+                
+            }
+        }
+
     }
     for (int i = 0; i < whitePiecesPI.size() ; i++  ) {
         // whitePiecesPI.at(i).printPieceInfo();
@@ -149,18 +174,162 @@ const int Bitboards::countWhiteMaterial() {
     return value;
 }
 bool Bitboards::isBlackKingInCheck() {
-    for (int i = 0 ; i < blackPiecesPI.size() ; i++ ) {
-        if (blackPiecesPI.at(i).getPiece() == 'k' ) {
-            int kingSquare = blackPiecesPI.at(i).getSquare();
-            if ( whiteAttacking[kingSquare] == 1 ) {
-                std::cout << "black king in check at: " << i << "\n";
-    //            printBitboard(whiteAttacking);
-                blackKingCheck = true;
-                return true;
-            }
+
+
+    int square;
+    for (auto p : blackPiecesPI ) {
+        if (p.getPiece() == 'k' ) {
+            square = p.getSquare();
+            break;
         }
 
     }
+    int file = square % 8;
+    int rank = square / 8;
+    // lets check rook like moves and if there is white rook or queen there 
+    for (int i = file+1 ; i < 8 ; i++ ) {
+        if (charBoard[rank*8+i] != ' ') {
+            if (charBoard[rank*8+i] == 'R' ||charBoard[rank*8+i] == 'Q') {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+    }
+    // look to the left
+    for (int i = file - 1 ; i >= 0 ; i-- ) {
+        if (charBoard[rank*8+i] != ' ') {
+            if (charBoard[rank*8+i] == 'R'||charBoard[rank*8+i] == 'Q') {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+    }
+
+    // look down
+    for (int i = rank + 1 ; i < 8 ; i++ ) {
+        if (charBoard[i*8+file] != ' ') {
+            if (charBoard[i*8+file] == 'R' ||charBoard[i*8+file] == 'Q') {
+                return true;
+            }
+            else {
+                break;
+            }
+        
+        }
+    }
+    // look up
+    for (int i = rank - 1 ; i >= 0 ; i-- ) {
+        if (charBoard[i*8+file] != ' ') {
+            if (charBoard[i*8+file] == 'R' ||charBoard[i*8+file] == 'Q') {
+                return true;
+            }
+            else {
+                break;
+            }
+        
+        }
+    }
+    // lets check white knight checks
+    rank = rank - 2;
+    file++;
+    if (rank >= 0 && file < 8 && charBoard[rank*8+file] == 'N') {
+        return true;
+    }
+    rank++; file++;
+    if (rank >= 0 && file < 8 && charBoard[rank*8+file] == 'N') {
+        return true;
+    }
+    rank++; rank++;
+    if (rank < 8 && file < 8 && charBoard[rank*8+file] == 'N') {
+        return true;
+    }
+    rank++;file--;
+    if (rank < 8 && file < 8 && charBoard[rank*8+file] == 'N') {
+        return true;
+    }
+    // Knight moves to left clockwise still
+    file--;file--;
+    if (rank < 8 && file >= 0 && charBoard[rank*8+file] == 'N') {
+        return true;
+    }
+    rank--;file--;
+    if (rank < 8 && file >= 0 && charBoard[rank*8+file] == 'N') {
+        return true;
+    }
+    rank--;rank--;
+    if (rank >= 0 && file >= 0 && charBoard[rank*8+file] == 'N') {
+        return true; 
+    }
+    rank--;file++;
+    if (rank >= 0 && file >= 0 && charBoard[rank*8+file] == 'N') {
+        return true; 
+    }
+    file = square % 8;
+    int fileR = square % 8;
+    int fileL = square % 8;
+    rank = square / 8;
+    bool clearR = true;
+    bool clearL = true;
+    // bishop moves down (rankn number goes up) one rank at a time 
+    for (int i = rank+1; i < 8 ; i++ ) {
+       fileR++;
+       // At every rank look one file to right
+       if (fileR < 8 && clearR) {
+           // if there is own/white piece can't move there
+           if (charBoard[i*8+fileR] == 'B' ||charBoard[i*8+fileR] == 'Q') {
+               return true;
+           }
+           if (charBoard[i*8+fileR] != ' ') {
+               clearR = false;
+           }
+       }
+       fileL--;
+       // bishop moves down and left
+       if (fileL >= 0 && clearL) {
+           if (charBoard[i*8+fileL] == 'B' ||charBoard[i*8+fileL] == 'Q') {
+               return true;
+           }
+           if (charBoard[i*8+fileL] != ' ') {
+               clearL = false;
+           }
+       }
+    }
+    clearR = true;
+    clearL = true;
+    fileR = square % 8;
+    fileL = square % 8;
+    // bishop moves up (rank number goes down)
+    for (int i = rank-1 ; i >= 0 ; i-- ) {
+       fileR++;
+       if (fileR < 8 && clearR) {
+           if (charBoard[i*8 + fileR] == 'B' ||charBoard[i*8 + fileR] == 'Q') {
+               return true;
+           }
+           if (charBoard[i*8 + fileR] != ' ') {
+               clearR = false;
+           }
+       }
+       fileL--;
+       if (fileL >= 0 && clearL) {
+           if (charBoard[i*8 + fileL] == 'B' ||charBoard[i*8 + fileL] == 'Q') {
+               return true;
+           }
+           if (charBoard[i*8 + fileL] != ' ') {
+               clearR = false;
+           }
+       }
+
+    }
+    // pawn attacking squre check
+   if (charBoard[(rank+1)*8+file+1] == 'P' ||charBoard[(rank+1)*8+file-1] == 'P') {
+      return true;
+   } 
+    return false;
+
 }
 bool Bitboards::isWhiteKingInCheck() {
     
@@ -174,7 +343,7 @@ bool Bitboards::isWhiteKingInCheck() {
     }
     int file = square % 8;
     int rank = square / 8;
-    // look to the right
+    // lets check rook like moves and if there is black rook or queen there 
     for (int i = file+1 ; i < 8 ; i++ ) {
        // std::cout << "looking square:" << (rank*8+i) << " there is: " << charBoard[rank*8+i]<< "\n";
         if (charBoard[rank*8+i] != ' ') {
@@ -201,8 +370,6 @@ bool Bitboards::isWhiteKingInCheck() {
 
     // look down
     for (int i = rank + 1 ; i < 8 ; i++ ) {
-        
-      //  std::cout << "looking square:" << (i*8+file) << " there is: " << charBoard[i*8+file]<< "\n";
         if (charBoard[i*8+file] != ' ') {
             if (charBoard[i*8+file] == 'r' ||charBoard[i*8+file] == 'q') {
                 return true;
@@ -226,21 +393,109 @@ bool Bitboards::isWhiteKingInCheck() {
         
         }
     }
-   /* 
-    for (int i = 0 ; i < whitePiecesPI.size() ; i++ ) {
-        if (whitePiecesPI.at(i).getPiece() == 'K' ) {
-            int kingSquare = whitePiecesPI.at(i).getSquare();
-            if ( blackAttacking[kingSquare] == 1 ) {
-                std::cout << "white king in check at: " << i << "\n";
-     //           printBitboard(blackAttacking);
-                blackKingCheck = true;
-                return true;
-            }
-        }
-
+    // lets check black knight checks
+    /*
+    if (charBoard[(r-2)*8+(f+1)] == 'k' ||charBoard[(r-1)*8+(f+2)] == 'k' ||
+        charBoard[(r+1)*8+(f+2)] == 'k' ||charBoard[(r+2)*8+(f+1)] == 'k' ||
+        charBoard[(r+2)*8+(f-1)] == 'k' ||charBoard[(r+1)*8+(f-2)] == 'k' ||
+        charBoard[(r-1)*8+(f-2)] == 'k' ||charBoard[(r-2)*8+(f-1)] == 'k' ) {
+        return true;
     }
 */
-    
+    rank = rank - 2;
+    file++;
+    if (rank >= 0 && file < 8 && charBoard[rank*8+file] == 'n') {
+        return true; // whiteKnightMoves[rank*8+file] = 1;
+    }
+    rank++; file++;
+    if (rank >= 0 && file < 8 && charBoard[rank*8+file] == 'n') {
+        return true; // whiteKnightMoves[rank*8+file] = 1;
+    }
+    rank++; rank++;
+    if (rank < 8 && file < 8 && charBoard[rank*8+file] == 'n') {
+        return true; // whiteKnightMoves[rank*8+file] = 1;
+    }
+    rank++;file--;
+    if (rank < 8 && file < 8 && charBoard[rank*8+file] == 'n') {
+        return true; // whiteKnightMoves[rank*8+file] = 1;
+    }
+    // Knight moves to left clockwise still
+    file--;file--;
+    if (rank < 8 && file >= 0 && charBoard[rank*8+file] == 'n') {
+        return true; // whiteKnightMoves[rank*8+file] = 1;
+    }
+    rank--;file--;
+    if (rank < 8 && file >= 0 && charBoard[rank*8+file] == 'n') {
+        return true; // whiteKnightMoves[rank*8+file] = 1;
+    }
+    rank--;rank--;
+    if (rank >= 0 && file >= 0 && charBoard[rank*8+file] == 'n') {
+        return true; // whiteKnightMoves[rank*8+file] = 1;
+    }
+    rank--;file++;
+    if (rank >= 0 && file >= 0 && charBoard[rank*8+file] == 'n') {
+        return true; // whiteKnightMoves[rank*8+file] = 1;
+    }
+    file = square % 8;
+    int fileR = square % 8;
+    int fileL = square % 8;
+    rank = square / 8;
+    bool clearR = true;
+    bool clearL = true;
+    // bishop moves down (rankn number goes up) one rank at a time 
+    for (int i = rank+1; i < 8 ; i++ ) {
+       fileR++;
+       // At every rank look one file to right
+       if (fileR < 8 && clearR) {
+           // if there is own/white piece can't move there
+           if (charBoard[i*8+fileR] == 'b' ||charBoard[i*8+fileR] == 'q') {
+               return true;
+           }
+           if (charBoard[i*8+fileR] != ' ') {
+               clearR = false;
+           }
+       }
+       fileL--;
+       // bishop moves down and left
+       if (fileL >= 0 && clearL) {
+           if (charBoard[i*8+fileL] == 'b' ||charBoard[i*8+fileL] == 'q') {
+               return true;
+           }
+           if (charBoard[i*8+fileL] != ' ') {
+               clearL = false;
+           }
+       }
+    }
+    clearR = true;
+    clearL = true;
+    fileR = square % 8;
+    fileL = square % 8;
+    // bishop moves up (rank number goes down)
+    for (int i = rank-1 ; i >= 0 ; i-- ) {
+       fileR++;
+       if (fileR < 8 && clearR) {
+           if (charBoard[i*8 + fileR] == 'b' ||charBoard[i*8 + fileR] == 'q') {
+               return true;
+           }
+           if (charBoard[i*8 + fileR] != ' ') {
+               clearR = false;
+           }
+       }
+       fileL--;
+       if (fileL >= 0 && clearL) {
+           if (charBoard[i*8 + fileL] == 'b' ||charBoard[i*8 + fileL] == 'q') {
+               return true;
+           }
+           if (charBoard[i*8 + fileL] != ' ') {
+               clearR = false;
+           }
+       }
+
+    }
+    // pawn attacking squre check
+   if (charBoard[(rank-1)*8+file+1] == 'p' ||charBoard[(rank-1)*8+file-1] == 'p') {
+      return true;
+   } 
     return false;
 }
 
@@ -261,7 +516,7 @@ std::bitset<64> Bitboards::getAttackingMoves(int square, char piece) {
         case 'Q':
             return getWhiteQueenMoves(square);
         case 'P':
-            return getWhitePawnAttackingMoves(square);
+            return getWhitePawnAttackingMoves(square) |= getWhitePawnMoves(square);
         case 'r':
             return getBlackRookMoves(square);
         case 'n':
@@ -273,7 +528,7 @@ std::bitset<64> Bitboards::getAttackingMoves(int square, char piece) {
         case 'q':
             return getBlackQueenMoves(square);
         case 'p':
-            return getBlackPawnAttackingMoves(square);
+            return getBlackPawnAttackingMoves(square) |= getBlackPawnMoves(square);
         default:
 
             std::bitset<64> empty;
@@ -281,14 +536,33 @@ std::bitset<64> Bitboards::getAttackingMoves(int square, char piece) {
             return empty;
     }
 }
-std::bitset<64> Bitboards::getLegalMoves(int square, char piece) {
+// This method should guarantee that moves are legal
+std::bitset<64> Bitboards::getLegalMoves(int square) {
+    for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
+        if (whitePiecesPI.at(i).getSquare() == square) {
+            return whitePiecesPI.at(i).getLegalMoves();
+        }
+    }
+    for (int i = 0 ; i < blackPiecesPI.size() ; i++) {
+        if (blackPiecesPI.at(i).getSquare() == square) {
+            return blackPiecesPI.at(i).getLegalMoves();
+        }
+    }
 
+    std::bitset<64> empty;
+    return empty;
+
+}
+// This is used inside bitboards, probably should be private, does not guarantee that 
+// every move ginven this method is really legal
+std::bitset<64> Bitboards::getLegalMoves(int square, char piece) {
+/*
     for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
         if (whitePiecesPI.at(i).getPiece() == piece) {
             return whitePiecesPI.at(i).getLegalMoves();
         }
     }
-    /*
+   */ 
     switch(piece) {
         case 'R':
             return getWhiteRookMoves(square);
@@ -320,7 +594,7 @@ std::bitset<64> Bitboards::getLegalMoves(int square, char piece) {
             //std::cout << "ups";
             return empty;
     }
-    */
+    
 }
 void Bitboards::printBitboard(std::bitset<64> pb) {
 

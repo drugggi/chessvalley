@@ -16,7 +16,7 @@ class PieceInfo {
         PieceInfo(char p,int s);
         ~PieceInfo();
         void setLegalMoves(std::bitset<64> lm);
-        void setLegalMove(int square, bool allowed);
+        void setLegalMove(int moveSquare, bool allowed);
         void printPieceInfo();
         void printLegalMoveCoordinates();
         int getSquare();

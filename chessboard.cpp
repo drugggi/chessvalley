@@ -244,7 +244,7 @@ bool Chessboard::moveCommand(std::string command) {
     }
     else if (highlightSquare != -1) {
        // std::cout << "move command from: "<< highlightSquare << " to: " << square << "\n";
-        std::bitset<64> legalMoves = bbs->getLegalMoves(highlightSquare, SQ[highlightSquare]);
+        std::bitset<64> legalMoves = bbs->getLegalMoves(highlightSquare);//, SQ[highlightSquare]);
         if ( legalMoves[square] == 1 ) {
             movePiece(highlightSquare,square);
             whitesTurn = false;
@@ -262,7 +262,7 @@ bool Chessboard::moveCommand(std::string command) {
         std::cout << "piece there is: '" << SQ[square] << "'\n";
         std::cout << "highlight command" << "\n";
         highlightSquare = square;
-        std::bitset<64> legalMoves = bbs->getLegalMoves(square, SQ[square] );
+        std::bitset<64> legalMoves = bbs->getLegalMoves(square);//, SQ[square] );
         bbs->printBitboard(legalMoves);
     }
 

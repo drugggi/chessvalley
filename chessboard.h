@@ -19,18 +19,16 @@ class Chessboard {
         std::array<char,64> SQ = { 'r','n','b','q','k','b','n','r',
                 ' ','p','p','p','p','p','p','p',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
-                ' ',' ',' ',' ',' ',' ',' ',' ',
+                'R',' ',' ',' ',' ',' ',' ',' ',
 
-                ' ','K',' ',' ',' ',' ',' ',' ',
+                'K',' ',' ',' ',' ',' ',' ',' ',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
                 'P','P','P','P','P','P','P','P',
-                'R','N','B','Q',' ','B','N','R' };
+                ' ','N','B','Q',' ','B','N','R' };
 
         void movePiece(char piece, int moveTo);
         void updateBoard(int pieceFrom, int pieceTo);
         void movePiece(int from, int to);
-       // std::vector<PieceInfo> whitePieces;
-       // std::vector<PieceInfo> blackPieces;
         std::vector<int> moveHistory;
     public:
         Chessboard();

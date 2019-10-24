@@ -41,13 +41,14 @@ void PieceInfo::setLegalMoves(std::bitset<64> lm) {
     legalMoves = lm;
 }
 
-void PieceInfo::setLegalMove(int square, bool allowed) {
-    std::cout << piece << "'s move " << square << " was set to: '" << allowed << "'\n";
+void PieceInfo::setLegalMove(int moveSquare, bool allowed) {
+    std::cout << piece << "(" << Chessboard::coordinate(square) << ")'s move to "
+        << Chessboard::coordinate(moveSquare) << " reverted\n";
     if (allowed) {
-        legalMoves[square] = 1;
+        legalMoves[moveSquare] = 1;
     }
     else {
-        legalMoves[square] = 0;
+        legalMoves[moveSquare] = 0;
     }
 }
 std::bitset<64> PieceInfo::getLegalMoves() {
