@@ -7,6 +7,7 @@
 
 class Bitboards {
     private:
+        std::array<char, 64> charBoard;
         std::bitset<64> occupiedSquares;
         std::bitset<64> whitePieces;
        std::bitset<64> blackPieces;
@@ -27,9 +28,11 @@ class Bitboards {
     public:
         Bitboards(std::array<char,64> SQ,bool whiteToMove);
         Bitboards(std::vector<PieceInfo> wpPI, std::vector<PieceInfo> bpPI,bool whiteToMove);
+        std::vector<PieceInfo> getWhitePieces();
+        std::vector<PieceInfo> getBlackPieces();
         void printBitboard(std::bitset<64> pb);
         bool isBlackKingInCheck();
-        bool isWhiteKingInCheck(int kingSquare);
+        bool isWhiteKingInCheck();
         const int countWhiteMaterial();
         const int countBlackMaterial();
         std::bitset<64> getLegalMoves(int square, char piece);
@@ -50,6 +53,14 @@ class Bitboards {
         std::bitset<64> getBlackQueenMoves(int square);
         std::bitset<64> getBlackPawnMoves(int square);
         std::bitset<64> getBlackPawnAttackingMoves(int square);
+        
+        /*
+        char tPieceRookMovesUp(int square);
+        char getPieceRookMovesRight(int square);
+        char getPieceRookMovesDown(int square);
+        char getPieceRookMovesLeft(int square);
+        */
+
 };
 
 

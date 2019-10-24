@@ -16,8 +16,17 @@ Chessboard::~Chessboard() {
 }
 void Chessboard::computerMovesRandomly() {
 
-    
+   /* 
+    std::vector<PieceInfo> testgetpieces = bbs->getBlackPieces();
+    std::cout << "test begins" << "\n";
+    for (int i = 0; i < testgetpieces.size() ; i++) {
+        testgetpieces.at(i).printPieceInfo();
+    }
+    std::cout << "test ends" << "\n";
+   */ 
+    std::vector<PieceInfo> blackPieces = bbs->getBlackPieces();
     int allPieces = blackPieces.size();
+
     std::srand(std::time(nullptr) );
     int random_piece = std::rand() % allPieces;
 
@@ -45,8 +54,7 @@ void Chessboard::computerMovesRandomly() {
             return;
         }
     }
-    std::cout << "values W: " << bbs->countWhiteMaterial() << " B: " 
-        << bbs->countBlackMaterial() << "\n";    
+//    std::cout << "values W: " << bbs->countWhiteMaterial() << " B: " << bbs->countBlackMaterial() << "\n";    
     std::vector<int> moves = blackPieces.at(random_piece).getLegalMoveSquares();
     int random_move = std::rand() % moves.size();
     // std::cout << "moves.size(): " << moves.size() << "  rand: " << random_move << "\n";
@@ -56,27 +64,31 @@ void Chessboard::computerMovesRandomly() {
 }
 void Chessboard::initializeChessboard(std::array<char,64> newsetup) {
 
-    whitePieces.clear();
-    blackPieces.clear();
-    SQ = newsetup;
-    delete bbs;
-    bbs = new Bitboards(SQ,whitesTurn);
+    //whitePieces.clear();
+    //blackPieces.clear();
+   // SQ = newsetup;
+   // delete bbs;
+   // bbs = new Bitboards(SQ,whitesTurn);
+    /*
     for (int i = 0 ; i < SQ.size() ; i++) {
           if ( SQ[i] != ' ' ) {
 
               PieceInfo temp {SQ[i] , i };
               temp.setLegalMoves( bbs->getLegalMoves(i,SQ[i]) );
               if ( (int)SQ[i] < ((int)'a') ) {
-                  whitePieces.push_back(temp);
+     //             whitePieces.push_back(temp);
               }
               else {
-                  blackPieces.push_back(temp);
+      //            blackPieces.push_back(temp);
               }
           } 
     }
+    */
 
 }
 const void Chessboard::printBoardPieces() {
+    std::vector<PieceInfo> whitePieces = bbs->getWhitePieces();
+    std::vector<PieceInfo> blackPieces = bbs->getBlackPieces();
 
     for (int i = 0; i < whitePieces.size() ; i++ ) {
         whitePieces.at(i).printPieceInfo();
@@ -231,7 +243,7 @@ bool Chessboard::moveCommand(std::string command) {
         highlightSquare = -1;
     }
     else if (highlightSquare != -1) {
-        std::cout << "move command from: "<< highlightSquare << " to: " << square << "\n";
+       // std::cout << "move command from: "<< highlightSquare << " to: " << square << "\n";
         std::bitset<64> legalMoves = bbs->getLegalMoves(highlightSquare, SQ[highlightSquare]);
         if ( legalMoves[square] == 1 ) {
             movePiece(highlightSquare,square);
@@ -262,7 +274,7 @@ void Chessboard::movePiece(int from, int to) {
     SQ[to] = SQ[from];
     SQ[from] = ' ';
     
-    Bitboards temp {SQ,whitesTurn};
+    // Bitboards temp {SQ,whitesTurn};
     /*
     if (temp.isBlackKingInCheck() ||temp.isWhiteKingInCheck() ) {
         std::cout << "some king is in check"  << "\n";
@@ -271,11 +283,14 @@ void Chessboard::movePiece(int from, int to) {
   //     return; 
     }
     */
-    delete bbs;
+    // delete bbs;
     
 
-    bbs = new Bitboards(SQ,whitesTurn);
-    initializeChessboard(SQ);
+    // Huge pain in the ass was tracking the bug where it was wrong color to move
+    // !whitesTurn seems to be working so far
+    delete bbs;
+     bbs = new Bitboards(SQ,!whitesTurn);
+    // initializeChessboard(SQ);
     moveHistory.push_back(from);
     moveHistory.push_back(to);
 }

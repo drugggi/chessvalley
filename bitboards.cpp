@@ -17,6 +17,7 @@ Bitboards::Bitboards(std::vector<PieceInfo> wpPI, std::vector<PieceInfo> bpPI, b
 }
 
 Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
+    charBoard = pieceBoard;
     
     if(whiteToMove) {
         std::cout << "it is white's turn" << "\n";
@@ -57,21 +58,12 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         }
        
     }
-    std::cout << "size" << whitePiecesPI.size() << "\n";
-    int whiteKingSquare;
-    for (auto p : whitePiecesPI ) {
-        if (p.getPiece() == 'K' ) {
-            whiteKingSquare = p.getSquare();
-            break;
-        }
-
-    }
-    std::cout << "white King is at: " << whiteKingSquare << "\n";
+    std::cout << "white to move: " << whiteToMove << "\n";
     if (whiteToMove) {
         // create bitboards for whitePieces and blackPieces 
         std::bitset<64> tempPiecemoves;
-        for (auto p : whitePiecesPI) {
-            tempPiecemoves = p.getLegalMoves();
+        for (int j = 0 ; j < whitePiecesPI.size() ; j++) {
+            tempPiecemoves = whitePiecesPI.at(j).getLegalMoves();
 
             // this goes through all 64 squares, optimize this please
             for (int i = 0 ; i < tempPiecemoves.size() ; i++ ) {
@@ -80,34 +72,41 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
                 // making the move illegal 
                 if (tempPiecemoves[i] == 1 ) {
 
-                    int startingSquare = p.getSquare();
-                    p.setSquare(i);
+                    char piecemoving = whitePiecesPI.at(j).getPiece();
+                    int startingSquare = whitePiecesPI.at(j).getSquare();
+                    char temppiece = charBoard[i];
+                    whitePiecesPI.at(j).setSquare(i);
+                    charBoard[startingSquare] = ' ';
+                    charBoard[i]=piecemoving;
 
                     whitePieces[startingSquare] = 0;
                     whitePieces[i] = 1;
-                   if (isWhiteKingInCheck(whiteKingSquare) ) {
+                   if (isWhiteKingInCheck() ) {
                        std::cout << "WhiteKingInChes!" << "\n";
-                       std::cout << tempPiecemoves << "\n";
                       tempPiecemoves[i] = 0;
-                      std::cout << tempPiecemoves << "\n";
+                      whitePiecesPI.at(j).setLegalMove(i, false);
+//            printBitboard(tempPiecemoves);
+ //           printBitboard(p.getLegalMoves() );
                    }
                    whitePieces[startingSquare] = 1;
                    whitePieces[i] = 0;
-                   p.setSquare(startingSquare);
+                   whitePiecesPI.at(j).setSquare(startingSquare);
+                   charBoard[startingSquare] = piecemoving;
+                   charBoard[i] = temppiece;
 
-
+/*
                     std::cout << "test this move: " << Chessboard::coordinate(p.getSquare() )
                         << " to "
                         << i << ":" << Chessboard::coordinate(i) << "\n";
                     Bitboards isKingInCheck {whitePiecesPI, blackPiecesPI, whiteToMove};
-
+*/
 
                 }
 
                 
             }
     //        std::cout << tempPiecemoves;
-
+ //       p.setLegalMoves(tempPiecemoves);
      //       p.printPieceInfo();
         }
 
@@ -115,6 +114,9 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
     else {
 
         // black to move
+    }
+    for (int i = 0; i < whitePiecesPI.size() ; i++  ) {
+        // whitePiecesPI.at(i).printPieceInfo();
     }
 //    printBitboard(blackAttacking);
  //   printBitboard(whiteAttacking);
@@ -126,7 +128,12 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
     }
     */
 }
-
+std::vector<PieceInfo> Bitboards::getWhitePieces() {
+    return whitePiecesPI;
+}
+std::vector<PieceInfo> Bitboards::getBlackPieces() {
+    return blackPiecesPI;
+}
 const int Bitboards::countBlackMaterial() {
     int value = 0;
     for (int i = 0 ; i < blackPiecesPI.size() ; i++) {
@@ -155,15 +162,71 @@ bool Bitboards::isBlackKingInCheck() {
 
     }
 }
-bool Bitboards::isWhiteKingInCheck(int kingSquare) {
+bool Bitboards::isWhiteKingInCheck() {
+    
+    int square;
+    for (auto p : whitePiecesPI ) {
+        if (p.getPiece() == 'K' ) {
+            square = p.getSquare();
+            break;
+        }
 
-    std::bitset<64> checkBlackRookThreat = getWhiteRookMoves(kingSquare);
+    }
+    int file = square % 8;
+    int rank = square / 8;
+    // look to the right
+    for (int i = file+1 ; i < 8 ; i++ ) {
+       // std::cout << "looking square:" << (rank*8+i) << " there is: " << charBoard[rank*8+i]<< "\n";
+        if (charBoard[rank*8+i] != ' ') {
+            if (charBoard[rank*8+i] == 'r' ||charBoard[rank*8+i] == 'q') {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+    }
+    // look to the left
+    for (int i = file - 1 ; i >= 0 ; i-- ) {
+       // std::cout << "looking square:" << (rank*8+i) << " there is: " << charBoard[rank*8+i]<< "\n";
+        if (charBoard[rank*8+i] != ' ') {
+            if (charBoard[rank*8+i] == 'r' ||charBoard[rank*8+i] == 'q') {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+    }
 
-    std::cout << "isWhiteKingInChes(" << kingSquare << ")\n";
-
-    std::cout << "blackRookEndOfThis?: " << checkBlackRookThreat << "\n";
-
-    /*
+    // look down
+    for (int i = rank + 1 ; i < 8 ; i++ ) {
+        
+      //  std::cout << "looking square:" << (i*8+file) << " there is: " << charBoard[i*8+file]<< "\n";
+        if (charBoard[i*8+file] != ' ') {
+            if (charBoard[i*8+file] == 'r' ||charBoard[i*8+file] == 'q') {
+                return true;
+            }
+            else {
+                break;
+            }
+        
+        }
+    }
+    // look up
+    for (int i = rank - 1 ; i >= 0 ; i-- ) {
+      //  std::cout << "looking square:" << (i*8+file) << " there is: " << charBoard[i*8+file]<< "\n";
+        if (charBoard[i*8+file] != ' ') {
+            if (charBoard[i*8+file] == 'r' ||charBoard[i*8+file] == 'q') {
+                return true;
+            }
+            else {
+                break;
+            }
+        
+        }
+    }
+   /* 
     for (int i = 0 ; i < whitePiecesPI.size() ; i++ ) {
         if (whitePiecesPI.at(i).getPiece() == 'K' ) {
             int kingSquare = whitePiecesPI.at(i).getSquare();
@@ -176,8 +239,8 @@ bool Bitboards::isWhiteKingInCheck(int kingSquare) {
         }
 
     }
-
-    */
+*/
+    
     return false;
 }
 
@@ -220,6 +283,12 @@ std::bitset<64> Bitboards::getAttackingMoves(int square, char piece) {
 }
 std::bitset<64> Bitboards::getLegalMoves(int square, char piece) {
 
+    for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
+        if (whitePiecesPI.at(i).getPiece() == piece) {
+            return whitePiecesPI.at(i).getLegalMoves();
+        }
+    }
+    /*
     switch(piece) {
         case 'R':
             return getWhiteRookMoves(square);
@@ -251,6 +320,7 @@ std::bitset<64> Bitboards::getLegalMoves(int square, char piece) {
             //std::cout << "ups";
             return empty;
     }
+    */
 }
 void Bitboards::printBitboard(std::bitset<64> pb) {
 
@@ -266,6 +336,7 @@ void Bitboards::printBitboard(std::bitset<64> pb) {
     }
     std::cout << "\n";
 }
+
 std::bitset<64> Bitboards::getBlackRookMoves(int square) {
 
 

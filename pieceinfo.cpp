@@ -40,6 +40,16 @@ void PieceInfo::setSquare(int newSquare) {
 void PieceInfo::setLegalMoves(std::bitset<64> lm) {
     legalMoves = lm;
 }
+
+void PieceInfo::setLegalMove(int square, bool allowed) {
+    std::cout << piece << "'s move " << square << " was set to: '" << allowed << "'\n";
+    if (allowed) {
+        legalMoves[square] = 1;
+    }
+    else {
+        legalMoves[square] = 0;
+    }
+}
 std::bitset<64> PieceInfo::getLegalMoves() {
     return legalMoves;
 }
