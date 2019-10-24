@@ -19,12 +19,6 @@ class Bitboards {
         std::vector<PieceInfo> blackPiecesPI;
        bool whiteKingCheck = false;
        bool blackKingCheck = false;
-//        std::bitset<64> whiteRook;
- //       std::bitset<64> whiteKnight;
-  //      std::bitset<64> whiteBishop;
-   //     std::bitset<64> whiteKing;
-    //    std::bitset<64> whiteQueen;
-     //   std::bitset<64> whitePawn;
     public:
         Bitboards(std::array<char,64> SQ,bool whiteToMove);
         Bitboards(std::vector<PieceInfo> wpPI, std::vector<PieceInfo> bpPI,bool whiteToMove);

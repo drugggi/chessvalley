@@ -95,9 +95,6 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
 
                 
             }
-    //        std::cout << tempPiecemoves;
- //       p.setLegalMoves(tempPiecemoves);
-     //       p.printPieceInfo();
         }
 
     }
@@ -140,18 +137,31 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         }
 
     }
+    std::bitset<64> tempLegalmoves;
+    if (whiteToMove) {
     for (int i = 0; i < whitePiecesPI.size() ; i++  ) {
-        // whitePiecesPI.at(i).printPieceInfo();
+        tempLegalmoves = tempLegalmoves |= whitePiecesPI.at(i).getLegalMoves();
+        whitePiecesPI.at(i).printPieceInfo();
     }
-//    printBitboard(blackAttacking);
- //   printBitboard(whiteAttacking);
-    /*if (isBlackKingInCheck() ) {
-        std::cout << "Black yes" << "\n";
+    std::cout <<"\n";
+    } else {
+    for (int i = 0; i < blackPiecesPI.size() ; i++) {
+        tempLegalmoves = tempLegalmoves |= blackPiecesPI.at(i).getLegalMoves();
+        blackPiecesPI.at(i).printPieceInfo();
     }
-    if (isWhiteKingInCheck() ) {
-        std::cout << "White yes" << "\n";
+    std::cout << "\n";
     }
-    */
+    printBitboard(tempLegalmoves);
+    if ( tempLegalmoves.any() == false ) {
+        std::cout << "no legal moves" << "\n";
+    
+        if ( isBlackKingInCheck() ||isWhiteKingInCheck() ) {
+            std::cout << " and king in check" << "\n";
+         }
+        std::string eof;
+        std::cout << "press anything to crash the chessvalley"  << "\n";
+        std::cin >> eof;
+    }
 }
 std::vector<PieceInfo> Bitboards::getWhitePieces() {
     return whitePiecesPI;
@@ -324,10 +334,44 @@ bool Bitboards::isBlackKingInCheck() {
        }
 
     }
-    // pawn attacking squre check
-   if (charBoard[(rank+1)*8+file+1] == 'P' ||charBoard[(rank+1)*8+file-1] == 'P') {
-      return true;
-   } 
+    // pawn and king attacking squre check
+    file = square % 8;
+    rank = square / 8;
+
+    // check the King moves one by one clockwise and two pawn attacking squares
+    rank--; // move up
+    if (rank >= 0 && charBoard[rank*8+file] == 'K') {
+        return true;
+    }
+    file++;
+    if (rank >= 0 && file <8 && ( charBoard[rank*8+file] == 'K' || charBoard[rank*8+file] == 'P')) {
+        return true;
+    }
+    rank++; // move right
+    if (file <8 && charBoard[rank*8+file] == 'K') {
+        return true;
+    }
+    rank++;  
+    if (rank < 8 && file <8 && charBoard[rank*8+file] == 'K') {
+        return true;
+    }
+    file--; // move down
+    if (rank < 8 && charBoard[rank*8+file] == 'K') {
+        return true;
+    }
+    file--;
+    if (rank < 8 && file >= 0 && charBoard[rank*8+file] == 'K') {
+        return true;
+    }
+    rank--; // move left
+    if ( file >= 0 && charBoard[rank*8+file] == 'K') {
+        return true;
+    }
+    rank--;
+    if (rank >= 0 && file >= 0 && ( charBoard[rank*8+file] == 'K'||charBoard[rank*8+file] == 'P')) {
+        return true;
+    }
+
     return false;
 
 }
@@ -393,15 +437,6 @@ bool Bitboards::isWhiteKingInCheck() {
         
         }
     }
-    // lets check black knight checks
-    /*
-    if (charBoard[(r-2)*8+(f+1)] == 'k' ||charBoard[(r-1)*8+(f+2)] == 'k' ||
-        charBoard[(r+1)*8+(f+2)] == 'k' ||charBoard[(r+2)*8+(f+1)] == 'k' ||
-        charBoard[(r+2)*8+(f-1)] == 'k' ||charBoard[(r+1)*8+(f-2)] == 'k' ||
-        charBoard[(r-1)*8+(f-2)] == 'k' ||charBoard[(r-2)*8+(f-1)] == 'k' ) {
-        return true;
-    }
-*/
     rank = rank - 2;
     file++;
     if (rank >= 0 && file < 8 && charBoard[rank*8+file] == 'n') {
@@ -492,10 +527,43 @@ bool Bitboards::isWhiteKingInCheck() {
        }
 
     }
-    // pawn attacking squre check
-   if (charBoard[(rank-1)*8+file+1] == 'p' ||charBoard[(rank-1)*8+file-1] == 'p') {
-      return true;
-   } 
+    // pawn and king attacking squre check
+    file = square % 8;
+    rank = square / 8;
+
+    // check the King moves one by one clockwise and two pawn attacking squares
+    rank--; // move up
+    if (rank >= 0 && charBoard[rank*8+file] == 'k') {
+        return true;
+    }
+    file++;
+    if (rank >= 0 && file <8 && ( charBoard[rank*8+file] == 'k' || charBoard[rank*8+file] == 'p')) {
+        return true;
+    }
+    rank++; // move right
+    if (file <8 && charBoard[rank*8+file] == 'k') {
+        return true;
+    }
+    rank++;  
+    if (rank < 8 && file <8 && charBoard[rank*8+file] == 'k' ){
+        return true;
+    }
+    file--; // move down
+    if (rank < 8 && charBoard[rank*8+file] == 'k') {
+        return true;
+    }
+    file--;
+    if (rank < 8 && file >= 0 && charBoard[rank*8+file] == 'k') {
+        return true;
+    }
+    rank--; // move left
+    if ( file >= 0 && charBoard[rank*8+file] == 'k') {
+        return true;
+    }
+    rank--;
+    if (rank >= 0 && file >= 0 && ( charBoard[rank*8+file] == 'k'||charBoard[rank*8+file] == 'p')) {
+        return true;
+    }
     return false;
 }
 
