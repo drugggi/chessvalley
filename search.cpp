@@ -9,6 +9,7 @@
 Search::Search(std::array<char,64> charBoard, bool whiteToMove) {
     std::cout << "searching started!" << "\n";
 
+    currentBoard = charBoard;
     Bitboards currentBoard {charBoard, whiteToMove};
     std::vector<PieceInfo> blackPieces = currentBoard.getBlackPieces();
     
