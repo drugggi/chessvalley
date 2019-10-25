@@ -20,6 +20,8 @@ Search::Search(std::array<char,64> charBoard, bool whiteToMove) {
         if (blackPieces.at(i).getLegalMoves().any() ) {
             moves = blackPieces.at(i).getLegalMoveSquares();
                 
+            std::cout << "\n"<< blackPieces.at(i).getPiece() << "(" <<
+                Chessboard::coordinate(blackPieces.at(i).getSquare() ) << ")";
             movingPiece = blackPieces.at(i).getPiece();
             startingSquare = blackPieces.at(i).getSquare();
             // test moves from starting square to legal squares found in moves
@@ -31,14 +33,15 @@ Search::Search(std::array<char,64> charBoard, bool whiteToMove) {
                 Bitboards evalBoard {charBoard, !whiteToMove};
                 float eval = evalBoard.countMaterial();
                 float attackingSquares = evalBoard.countBlackAttackingSquares();
-                
+               /* 
                  std::cout <<blackPieces.at(i).getPiece() << Chessboard::coordinate(moves.at(j) )
                      << " c: " << eval  << " ba: " << attackingSquares << " wa: " << evalBoard.countWhiteAttackingSquares() << " ";
+                     */
 
                  eval += attackingSquares;
+                 std::cout << Chessboard::coordinate(moves.at(j) ) << ":(" << eval << ") ";
                 if (eval < bestEval) {
-                    std::cout << "new best move found: " << eval << " " << movingPiece << 
-                        " to " << moves.at(j) << "\n";
+                    std::cout << " bestEval ";
                     bestEval = eval;
                     moveFrom = startingSquare;
                     moveTo = moves.at(j);

@@ -143,24 +143,24 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         tempLegalmoves = tempLegalmoves |= whitePiecesPI.at(i).getLegalMoves();
 //        whitePiecesPI.at(i).printPieceInfo();
     }
-    std::cout <<"\n";
     } else {
     for (int i = 0; i < blackPiecesPI.size() ; i++) {
         tempLegalmoves = tempLegalmoves |= blackPiecesPI.at(i).getLegalMoves();
  //       blackPiecesPI.at(i).printPieceInfo();
     }
-    std::cout << "\n";
     }
   //  printBitboard(tempLegalmoves);
     if ( tempLegalmoves.any() == false ) {
-        std::cout << "no legal moves" << "\n";
+        //std::cout << "no legal moves" << "\n";
     
         if ( isBlackKingInCheck() ||isWhiteKingInCheck() ) {
-            std::cout << " and king in check" << "\n";
+            std::cout << "king in check" << "";
          }
+        /*
         std::string eof;
         std::cout << "press anything to crash the chessvalley"  << "\n";
         std::cin >> eof;
+        */
     }
 }
 std::vector<PieceInfo> Bitboards::getWhitePieces() {
@@ -1353,7 +1353,7 @@ std::bitset<64> Bitboards::getBlackPawnMoves(int square) {
     std::bitset<64> blackPawnMoves;
     int file = square % 8;
     int rank = square / 8;
-    if (rank == 7) {
+    if (rank == 7 ||rank == 0) {
         std::cout << "impossible pawn square: " << square << "\n";
     }
     if ( rank == 1 ) {
@@ -1372,18 +1372,15 @@ std::bitset<64> Bitboards::getBlackPawnMoves(int square) {
         if ( blackPieces[rank*8+file] == 0 && whitePieces[rank*8+file] == 0) {
             blackPawnMoves[rank*8+file] = 1;
         }
-        if ( rank == 7 ) {
-            std::cout << "create a new piece" << "\n";
-        }
     }
     rank = square / 8 +1;
-    file++;     
-    if ( file >= 0 && rank >= 0 && whitePieces[rank*8+file] == 1) {
-        blackPawnMoves[rank*8+file] = 1;
+        // if in A file file==0 cant attack more left 
+    if ( file > 0 && whitePieces[rank*8+(file-1)] == 1) {
+        blackPawnMoves[rank*8+(file-1)] = 1;
     }
-    file--;file--;
-    if ( file < 8 && rank >= 0 && whitePieces[rank*8+file] == 1) {
-        blackPawnMoves[rank*8+file] = 1;
+    // if in H file file==7 cant attack right of course 
+    if ( file < 7 && whitePieces[rank*8+(file+1)] == 1) {
+        blackPawnMoves[rank*8+(file+1)] = 1;
     }
 
     return blackPawnMoves;
@@ -1393,15 +1390,14 @@ std::bitset<64> Bitboards::getBlackPawnAttackingMoves(int square) {
     std::bitset<64> blackPawnAttackingMoves;
     int file = square % 8;
     int rank = square / 8 +1;
-    file--;     
-    if ( file >= 0 && rank >= 0 && whitePieces[rank*8+file] == 1) {
-        blackPawnAttackingMoves[rank*8+file] = 1;
+        // if in A file file==0 cant attack more left 
+    if ( file > 0 && whitePieces[rank*8+(file-1)] == 1) {
+        blackPawnAttackingMoves[rank*8+(file-1)] = 1;
     }
-    file++;file++;
-    if ( file < 8 && rank >= 0 && whitePieces[rank*8+file] == 1) {
-        blackPawnAttackingMoves[rank*8+file] = 1;
+    // if in H file file==7 cant attack right of course 
+    if ( file < 7 && whitePieces[rank*8+(file+1)] == 1) {
+        blackPawnAttackingMoves[rank*8+(file+1)] = 1;
     }
-
     return blackPawnAttackingMoves;
 }
 std::bitset<64> Bitboards::getWhitePawnAttackingMoves(int square) {
@@ -1409,13 +1405,11 @@ std::bitset<64> Bitboards::getWhitePawnAttackingMoves(int square) {
     std::bitset<64> whitePawnAttackingMoves;
     int file = square % 8;
     int rank = square / 8 -1;
-    file--;     
-    if ( file >= 0 && rank >= 0 && blackPieces[rank*8+file] == 1) {
-        whitePawnAttackingMoves[rank*8+file] = 1;
+    if ( file > 0 && blackPieces[rank*8+(file-1)] == 1) {
+        whitePawnAttackingMoves[rank*8+(file-1)] = 1;
     }
-    file++;file++;
-    if ( file < 8 && rank >= 0 && blackPieces[rank*8+file] == 1) {
-        whitePawnAttackingMoves[rank*8+file] = 1;
+    if ( file < 7 && blackPieces[rank*8+(file+1)] == 1) {
+        whitePawnAttackingMoves[rank*8+(file+1)] = 1;
     }
 
     return whitePawnAttackingMoves;
@@ -1425,7 +1419,7 @@ std::bitset<64> Bitboards::getWhitePawnMoves(int square) {
     std::bitset<64> whitePawnMoves;
     int file = square % 8;
     int rank = square / 8;
-    if (rank == 0) {
+    if (rank == 0|| rank == 7) {
         std::cout << "impossible pawn square: " << square << "\n";
     }
     if ( rank == 6 ) {
@@ -1444,19 +1438,13 @@ std::bitset<64> Bitboards::getWhitePawnMoves(int square) {
         if ( whitePieces[rank*8+file] == 0 && blackPieces[rank*8+file] == 0) {
             whitePawnMoves[rank*8+file] = 1;
         }
-        if ( rank == 0 ) {
-            std::cout << "create a new piece" << "\n";
-        }
     }
     rank = square / 8 -1;
-    file--;     
-    if ( file >= 0 && rank >= 0 && blackPieces[rank*8+file] == 1) {
-        whitePawnMoves[rank*8+file] = 1;
+    if ( file > 0 && blackPieces[rank*8+(file-1)] == 1) {
+        whitePawnMoves[rank*8+(file-1)] = 1;
     }
-    file++;file++;
-    if ( file < 8 && rank >= 0 && blackPieces[rank*8+file] == 1) {
-        whitePawnMoves[rank*8+file] = 1;
+    if ( file < 7 && blackPieces[rank*8+(file+1)] == 1) {
+        whitePawnMoves[rank*8+(file+1)] = 1;
     }
-
     return whitePawnMoves;
 }
