@@ -352,7 +352,7 @@ bool Bitboards::isBlackKingInCheck() {
                return true;
            }
            if (charBoard[i*8 + fileL] != ' ') {
-               clearR = false;
+               clearL = false;
            }
        }
 
@@ -545,7 +545,7 @@ bool Bitboards::isWhiteKingInCheck() {
                return true;
            }
            if (charBoard[i*8 + fileL] != ' ') {
-               clearR = false;
+               clearL = false;
            }
        }
 
@@ -909,6 +909,7 @@ std::bitset<64> Bitboards::getBlackBishopMoves(int square) {
            if (blackPieces[i*8+fileR] == 0) {
                blackBishopMoves[i*8+fileR] = 1;
                // if there is other color piece, can move there but not past that piece
+               std::cout << " " << (i*8 + fileR);
                if (whitePieces[i*8+fileR] == 1) {
                    clearR = false;
                }
@@ -922,6 +923,8 @@ std::bitset<64> Bitboards::getBlackBishopMoves(int square) {
        if (fileL >= 0 && clearL) {
            if (blackPieces[i*8+fileL] == 0) {
                blackBishopMoves[i*8+fileL] = 1;
+
+               std::cout << " " << (i*8 + fileR);
                if(whitePieces[i*8+fileL] == 1) {
                    clearL = false;
                }
