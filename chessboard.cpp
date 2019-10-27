@@ -16,20 +16,57 @@ Chessboard::~Chessboard() {
 }
 void Chessboard::computerMovesNonRandomly() {
 
-    /*
-    std::vector<PieceInfo> blackPieces = bbs->getBlackPieces();
+    // Search findBestMove {SQ,whitesTurn};
+    int moveFrom;
+    int moveTo;
+    
+    std::cout << "searching started!" << "\n";
 
+    Bitboards currentBoard {SQ, whitesTurn};
+    std::vector<PieceInfo> blackPieces = currentBoard.getBlackPieces();
+    
+    std::vector<int> moves;
+    int startingSquare;
+    char movingPiece;
+    float bestEval=100;
     for (int i = 0 ; i < blackPieces.size() ; i++) {
         if (blackPieces.at(i).getLegalMoves().any() ) {
-            std::vector<int> moves = blackPieces.at(i).getLegalMoveSquares();
+            moves = blackPieces.at(i).getLegalMoveSquares();
                 
-            blackPieces.at(i).printPieceInfo();
+            std::cout << "\n"<< blackPieces.at(i).getPiece() << "(" <<
+                Chessboard::coordinate(blackPieces.at(i).getSquare() ) << ")";
+            movingPiece = blackPieces.at(i).getPiece();
+            startingSquare = blackPieces.at(i).getSquare();
+            // test moves from starting square to legal squares found in moves
+            for (int j = 0 ; j < moves.size() ; j++) {
+                SQ[startingSquare] = ' ';
+                char tempPiece = SQ[moves.at(j) ];
+                SQ[moves.at(j) ] = movingPiece;
+
+                Bitboards evalBoard {SQ, !whitesTurn};
+                float eval = evalBoard.countMaterial();
+                float attackingSquares = evalBoard.countBlackAttackingSquares();
+               /* 
+                 std::cout <<blackPieces.at(i).getPiece() << Chessboard::coordinate(moves.at(j) )
+                     << " c: " << eval  << " ba: " << attackingSquares << " wa: " << evalBoard.countWhiteAttackingSquares() << " ";
+                     */
+
+                 eval += attackingSquares;
+                 std::cout << Chessboard::coordinate(moves.at(j) ) << ":(" << eval << ") ";
+                if (eval < bestEval) {
+                    std::cout << " bestEval ";
+                    bestEval = eval;
+                    moveFrom = startingSquare;
+                    moveTo = moves.at(j);
+                }
+                SQ[startingSquare] = movingPiece;
+                SQ[moves.at(j) ] = tempPiece;
+
+            }
         }
     }
-*/
-    Search findBestMove {SQ,whitesTurn};
-    
-    movePiece(findBestMove.getMoveFrom() , findBestMove.getMoveTo() );
+
+    movePiece(moveFrom , moveTo );
     
     whitesTurn = true;
     // computerMovesRandomly();

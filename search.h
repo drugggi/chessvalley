@@ -6,17 +6,14 @@
 
 class Search {
     private:
-        std::array<char,64> currentBoard;
-        std::vector<int> legalMoves;
-        // best move
-        int moveFrom;
-        int moveTo;
-
+        int move;
+        float eval;
+        std::vector<Search> nextMoveSearch;
     public:
-        Search(std::array<char,64> charBoard, bool whiteToMove);
+        Search();
         ~Search();
-        int getMoveFrom();
-        int getMoveTo();
+        void searchNextMoves();
+        float getEval();
 };
 
 
