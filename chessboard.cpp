@@ -14,6 +14,54 @@ Chessboard::Chessboard() {
 Chessboard::~Chessboard() {
     delete bbs;
 }
+void Chessboard::computerTriesToCalculateMoves() {
+    std::cout << "searching starts!" << "\n";
+
+    Bitboards currentBoard {SQ, whitesTurn};
+    std::cout << "huge hefner " ;
+    std::vector<PieceInfo> blackPieces = currentBoard.getBlackPieces();
+    
+    std::vector<int> moves;
+    int pieceFrom;
+    int pieceTo;
+    float bestEval=100;
+    std::vector<Search> testingSearch;
+    std::cout << "fug";
+    for (int i = 0; i < blackPieces.size() ; i++) {
+        std::cout << "loselosesitutation ";
+
+        if (blackPieces.at(i).getLegalMoves().any() ) {
+            moves = blackPieces.at(i).getLegalMoveSquares();
+            pieceFrom = blackPieces.at(i).getSquare();
+            std::cout<<"inittowinit";
+
+            for (int j = 0; j < moves.size() ; j++) {
+                pieceTo = moves.at(j);
+                Search temp {SQ, pieceFrom, pieceTo, whitesTurn};
+                testingSearch.push_back(temp);
+
+            }
+
+        }
+    }
+ //   std::cout <<pieceFrom <<  "searching ends" << pieceTo <<  "\n";
+  //  std::cout << "testingSearch.size(): " << testingSearch.size();
+    std::cout <<"heh";
+    for (int i = 0 ; i < testingSearch.size() ; i++) {
+        testingSearch.at(i).searchNextMoves(SQ, whitesTurn);
+    }
+    std::cout << "huh\n";
+   /* 
+    for (int i = 0 ; i < testingSearch.size() ; i++) {
+        testingSearch.at(i).searchNextMoves(SQ, whitesTurn);
+    }
+   */ 
+    std::cout <<"in\n";
+    std::cout << "out\n";
+    movePiece(pieceFrom,pieceTo);
+
+    whitesTurn = true;
+}
 void Chessboard::computerMovesNonRandomly() {
 
     // Search findBestMove {SQ,whitesTurn};

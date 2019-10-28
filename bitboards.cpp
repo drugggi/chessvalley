@@ -25,7 +25,7 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         std::cout << "it is black's turn" << "\n";
     }
 */
-    // create bitboards for white/blac pieces from char board
+    // create bitboards for white/black pieces from char board
     for (int i = 0; i < 64 ; i++ ) {
         whitePieces[i] = 0;
         blackPieces[i] = 0;
@@ -137,6 +137,7 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         }
 
     }
+    
     std::bitset<64> tempLegalmoves;
     if (whiteToMove) {
     for (int i = 0; i < whitePiecesPI.size() ; i++  ) {
@@ -909,7 +910,7 @@ std::bitset<64> Bitboards::getBlackBishopMoves(int square) {
            if (blackPieces[i*8+fileR] == 0) {
                blackBishopMoves[i*8+fileR] = 1;
                // if there is other color piece, can move there but not past that piece
-               std::cout << " " << (i*8 + fileR);
+               // std::cout << " " << (i*8 + fileR);
                if (whitePieces[i*8+fileR] == 1) {
                    clearR = false;
                }
@@ -924,7 +925,7 @@ std::bitset<64> Bitboards::getBlackBishopMoves(int square) {
            if (blackPieces[i*8+fileL] == 0) {
                blackBishopMoves[i*8+fileL] = 1;
 
-               std::cout << " " << (i*8 + fileR);
+               // std::cout << " " << (i*8 + fileR);
                if(whitePieces[i*8+fileL] == 1) {
                    clearL = false;
                }
@@ -1357,7 +1358,8 @@ std::bitset<64> Bitboards::getBlackPawnMoves(int square) {
     int file = square % 8;
     int rank = square / 8;
     if (rank == 7 ||rank == 0) {
-        std::cout << "impossible pawn square: " << square << "\n";
+        std::cout << "impossible pawn square: return empty " << square << "\n";
+        return blackPawnMoves;
     }
     if ( rank == 1 ) {
         rank++;
@@ -1423,7 +1425,8 @@ std::bitset<64> Bitboards::getWhitePawnMoves(int square) {
     int file = square % 8;
     int rank = square / 8;
     if (rank == 0|| rank == 7) {
-        std::cout << "impossible pawn square: " << square << "\n";
+        std::cout << "impossible pawn square: return empty " << square << "\n";
+        return whitePawnMoves;
     }
     if ( rank == 6 ) {
         rank--;

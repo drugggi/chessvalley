@@ -16,16 +16,16 @@ class Chessboard {
 
         int highlightSquare = -1;
         Bitboards* bbs;
-        std::array<char,64> SQ2 = { ' ',' ',' ',' ','k','b',' ','r',
-                ' ',' ',' ','p',' ','p',' ',' ',
+        std::array<char,64> SQ2 = { ' ',' ',' ',' ','k',' ',' ',' ',
+                ' ',' ',' ','p',' ',' ',' ',' ',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
-                'R',' ',' ',' ',' ',' ',' ',' ',
+                ' ',' ',' ',' ',' ',' ',' ',' ',
 
                 'K',' ',' ',' ',' ',' ',' ',' ',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
-                ' ',' ',' ',' ','P',' ',' ',' ',
-                ' ','N','B','Q',' ','B',' ','R' };
-        std::array<char,64> SQ = { 'r','n','b','q','k','q','n','r',
+                ' ','P',' ',' ',' ',' ',' ',' ',
+                ' ',' ',' ',' ',' ',' ',' ',' ' };
+        std::array<char,64> SQ = { 'r','n','b','q','k','b','n','r',
                 'p','p','p','p','p','p','p','p',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
@@ -52,6 +52,7 @@ class Chessboard {
         int whereIsPiece(char piece); 
         static std::string coordinate(int square);
 
+        void computerTriesToCalculateMoves();
         void computerMovesRandomly();
         void computerMovesNonRandomly();
 };
