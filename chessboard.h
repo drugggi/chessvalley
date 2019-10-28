@@ -6,17 +6,19 @@
 #include <vector>
 #include "bitboards.h"
 #include "pieceinfo.h"
+struct SpecialMoves {
+    int enPassant[2];
+    bool castleKingside;
+    bool castleQueenside;
+};
 
 class Chessboard {
     private:
         bool whitesTurn = true;
-        int enpassant = 0;
-        bool castledKingside = false;
-        bool castledQueenside = false;
 
         int highlightSquare = -1;
         Bitboards* bbs;
-        std::array<char,64> SQ = { ' ',' ',' ',' ',' ',' ',' ',' ',
+        std::array<char,64> SQ2 = { ' ',' ',' ',' ',' ',' ',' ',' ',
                 ' ','p','p','p',' ',' ',' ',' ',
                 'p',' ',' ',' ','p',' ',' ',' ',
                 ' ',' ',' ',' ',' ',' ','k',' ',
@@ -25,7 +27,7 @@ class Chessboard {
                 ' ',' ','P',' ',' ',' ',' ',' ',
                 ' ','P',' ','P',' ','P',' ',' ',
                 ' ',' ',' ','K',' ',' ',' ',' ' };
-        std::array<char,64> SQ2 = { 'r','n','b','q','k','b','n','r',
+        std::array<char,64> SQ = { 'r','n','b','q','k','b','n','r',
                 'p','p','p','p','p','p','p','p',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
                 ' ',' ',' ',' ',' ',' ',' ',' ',
@@ -42,6 +44,9 @@ class Chessboard {
     public:
         Chessboard();
         ~Chessboard();
+        SpecialMoves *whiteSpecialMoves;
+        SpecialMoves *blackSpecialMoves;
+        
         int getSquare(std::string coordinate);
         const void printChessboard();
         const void printBoardPieces();

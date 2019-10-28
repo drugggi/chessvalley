@@ -9,6 +9,8 @@
 
 Chessboard::Chessboard() {
     bbs = new Bitboards(SQ,whitesTurn);    
+    whiteSpecialMoves = new SpecialMoves{{0,0}, true, true};
+    blackSpecialMoves = new SpecialMoves{{0,0}, true, true};
 }
 
 Chessboard::~Chessboard() {
@@ -303,6 +305,52 @@ void Chessboard::movePiece(int from, int to) {
        SQ[from] = 'q';
     } 
 
+    if (SQ[from] == 'P' && (from - to) == 16) {
+        if (from == 48) {blackSpecialMoves->enPassant[1] = 33; }
+        else if (from == 55) {blackSpecialMoves->enPassant[0] = 38; }
+        else { blackSpecialMoves->enPassant[0] = to-1;
+            blackSpecialMoves->enPassant[1] = to+1;
+        }
+        std::cout <<  "allow en passant for black! squares" << blackSpecialMoves->enPassant[0]
+           << " and " << blackSpecialMoves->enPassant[1] << "  \n";
+    }
+    else if  (SQ[from] == 'p' && (from - to) == -16 ) {
+        if (from == 8) {whiteSpecialMoves->enPassant[1] = 25; }
+        else if (from == 15) {whiteSpecialMoves->enPassant[0] = 30; }
+        else { whiteSpecialMoves->enPassant[0] = to-1;
+            whiteSpecialMoves->enPassant[1] = to+1;
+        }
+        std::cout <<  "allow en passant for white! squares" << whiteSpecialMoves->enPassant[0]
+           << " and " << whiteSpecialMoves->enPassant[1] << "  \n";
+    }
+    else {
+        blackSpecialMoves->enPassant[0] = 0;
+        blackSpecialMoves->enPassant[1] = 0;
+        whiteSpecialMoves->enPassant[0] = 0;
+        whiteSpecialMoves->enPassant[1] = 0;
+    }
+    if (SQ[from] == 'K' ) {
+        std::cout << "King moved castling disallowed";
+        whiteSpecialMoves->castleKingside = false;
+        whiteSpecialMoves->castleQueenside = false;
+    }
+    else if (SQ[from] == 'k' ) {
+        std::cout << "black king moved, castling disallowed";
+        blackSpecialMoves->castleKingside = false;
+        blackSpecialMoves->castleQueenside = false;
+    }
+    if ((from == 63 || from == 56 ) && SQ[from] == 'R') {
+        if ( from == 56 ) {whiteSpecialMoves->castleQueenside = false; }
+        if ( from == 63 ) {whiteSpecialMoves->castleKingside = false; }
+    }
+    else if ((from == 0 || from == 7 ) && SQ[from] == 'r') {
+        if ( from == 0 ) {blackSpecialMoves->castleQueenside = false; }
+        if ( from == 7 ) {blackSpecialMoves->castleKingside = false; }
+    }
+    std::cout << "castling rights bqs: "
+        << blackSpecialMoves->castleQueenside << " bks " << blackSpecialMoves->castleKingside
+        << " wQs " << whiteSpecialMoves->castleQueenside <<
+        " wKs "<< whiteSpecialMoves->castleKingside << "\n";
     SQ[to] = SQ[from];
     SQ[from] = ' ';
     
