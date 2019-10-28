@@ -41,18 +41,21 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
             occupiedSquares[i] = 1;
         }
     }
+
     // get attacking moves, which helps to get legal moves when king is in check
     for (int i = 0 ; i < pieceBoard.size() ; i++) {
         if (pieceBoard.at(i) != ' ') {
             PieceInfo temp {pieceBoard.at(i) , i };
             if ((int)pieceBoard.at(i) < (int)'a') {
+                
                // whiteAttacking = whiteAttacking |= getAttackingMoves(i,pieceBoard.at(i) );
-               temp.setLegalMoves( getAttackingMoves(i,pieceBoard.at(i) ) );
+               
+               temp.setLegalMoves( getAttackingMoves(temp.getSquare(),temp.getPiece() ) );
                whitePiecesPI.push_back(temp);
             }
             else {
                // blackAttacking = blackAttacking |= getAttackingMoves(i,pieceBoard.at(i) );
-                temp.setLegalMoves( getAttackingMoves(i,pieceBoard.at(i) ) );
+                temp.setLegalMoves( getAttackingMoves(temp.getSquare(),temp.getPiece() ) );
                 blackPiecesPI.push_back(temp);
             }
         }
@@ -209,14 +212,12 @@ const float Bitboards::countWhiteMaterial() {
 }
 bool Bitboards::isBlackKingInCheck() {
 
-
     int square;
     for (auto p : blackPiecesPI ) {
         if (p.getPiece() == 'k' ) {
             square = p.getSquare();
             break;
         }
-
     }
     int file = square % 8;
     int rank = square / 8;
@@ -308,7 +309,7 @@ bool Bitboards::isBlackKingInCheck() {
     rank = square / 8;
     bool clearR = true;
     bool clearL = true;
-    // bishop moves down (rankn number goes up) one rank at a time 
+    // bishop like moves down (rank number goes up) one rank at a time 
     for (int i = rank+1; i < 8 ; i++ ) {
        fileR++;
        // At every rank look one file to right
@@ -368,7 +369,7 @@ bool Bitboards::isBlackKingInCheck() {
         return true;
     }
     file++;
-    if (rank >= 0 && file <8 && ( charBoard[rank*8+file] == 'K' || charBoard[rank*8+file] == 'P')) {
+    if (rank >= 0 && file <8 &&  charBoard[rank*8+file] == 'K' ) {
         return true;
     }
     rank++; // move right
@@ -376,7 +377,7 @@ bool Bitboards::isBlackKingInCheck() {
         return true;
     }
     rank++;  
-    if (rank < 8 && file <8 && charBoard[rank*8+file] == 'K') {
+    if (rank < 8 && file <8 && (charBoard[rank*8+file] == 'K' || charBoard[rank*8+file] == 'P')) {
         return true;
     }
     file--; // move down
@@ -384,7 +385,7 @@ bool Bitboards::isBlackKingInCheck() {
         return true;
     }
     file--;
-    if (rank < 8 && file >= 0 && charBoard[rank*8+file] == 'K') {
+    if (rank < 8 && file >= 0 && (charBoard[rank*8+file] == 'K' || charBoard[rank*8+file] == 'P')) {
         return true;
     }
     rank--; // move left
@@ -392,7 +393,7 @@ bool Bitboards::isBlackKingInCheck() {
         return true;
     }
     rank--;
-    if (rank >= 0 && file >= 0 && ( charBoard[rank*8+file] == 'K'||charBoard[rank*8+file] == 'P')) {
+    if (rank >= 0 && file >= 0 &&  charBoard[rank*8+file] == 'K') {
         return true;
     }
 

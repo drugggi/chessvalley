@@ -295,22 +295,17 @@ bool Chessboard::moveCommand(std::string command) {
 }
 void Chessboard::movePiece(int from, int to) {
     
-    char tempChar = SQ[to];
+    if (SQ[from] == 'P' && to < 8) {
+        std::cout << "automatic promotion, change this in future\n";
+        SQ[from] = 'Q';
+    }
+    else  if ( SQ[from] == 'p' && to > 55 ) {
+       SQ[from] = 'q';
+    } 
+
     SQ[to] = SQ[from];
     SQ[from] = ' ';
     
-    // Bitboards temp {SQ,whitesTurn};
-    /*
-    if (temp.isBlackKingInCheck() ||temp.isWhiteKingInCheck() ) {
-        std::cout << "some king is in check"  << "\n";
-//        SQ[from] = SQ[to];
- //       SQ[to] = tempChar;
-  //     return; 
-    }
-    */
-    // delete bbs;
-    
-
     // Huge pain in the ass was tracking the bug where it was wrong color to move
     // !whitesTurn seems to be working so far
     delete bbs;

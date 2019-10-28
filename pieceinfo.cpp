@@ -7,6 +7,7 @@
 PieceInfo::PieceInfo(char p, int s) {
     piece = p;
     square = s;
+
     if (p == 'p' || p == 'P' ||p == 'k' || p == 'K') {
         value = 1;
     }
