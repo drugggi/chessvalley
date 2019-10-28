@@ -17,8 +17,11 @@ Chessboard::~Chessboard() {
     delete bbs;
 }
 void Chessboard::computerTriesToCalculateMoves() {
-    std::cout << "searching starts!" << "\n";
 
+    Search computerThinks{SQ,whitesTurn};
+    computerThinks.evaluateCurrentBoard(SQ,whitesTurn);
+    whitesTurn = !whitesTurn;
+    /*
     Bitboards currentBoard {SQ, whitesTurn};
     std::cout << "huge hefner " ;
     std::vector<PieceInfo> blackPieces = currentBoard.getBlackPieces();
@@ -53,16 +56,12 @@ void Chessboard::computerTriesToCalculateMoves() {
         testingSearch.at(i).searchNextMoves(SQ, whitesTurn);
     }
     std::cout << "huh\n";
-   /* 
-    for (int i = 0 ; i < testingSearch.size() ; i++) {
-        testingSearch.at(i).searchNextMoves(SQ, whitesTurn);
-    }
-   */ 
     std::cout <<"in\n";
     std::cout << "out\n";
     movePiece(pieceFrom,pieceTo);
 
     whitesTurn = true;
+    */
 }
 void Chessboard::computerMovesNonRandomly() {
 

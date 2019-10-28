@@ -20,8 +20,8 @@ int main(int argc, const char* argv[] ) {
            }
        }
        else {
-           //pChessboard->computerTriesToCalculateMoves();
-           pChessboard->computerMovesNonRandomly();
+           pChessboard->computerTriesToCalculateMoves();
+//           pChessboard->computerMovesNonRandomly();
            //pChessboard->computerMovesRandomly();
        }
    }

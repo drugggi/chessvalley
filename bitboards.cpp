@@ -174,23 +174,24 @@ std::vector<PieceInfo> Bitboards::getBlackPieces() {
     return blackPiecesPI;
 }
 const float Bitboards::countAttackingSquares() {
-    return countWhiteAttackingSquares() - countBlackAttackingSquares();
+    return countWhiteAttackingSquares() + countBlackAttackingSquares();
 }
 const float Bitboards::countBlackAttackingSquares() {
 
-    std::bitset<64> blackAttacking;
+    float blackAttacking=0;
     for (int i = 0 ; i < blackPiecesPI.size() ; i++) {
-        blackAttacking = blackAttacking |= blackPiecesPI.at(i).getLegalMoves();
+        blackAttacking +=  (float)blackPiecesPI.at(i).getLegalMoves().count();
     }
-    return -(float)blackAttacking.count()/100;
+    return blackAttacking/-100;
+
 }
 const float Bitboards::countWhiteAttackingSquares() {
 
-    std::bitset<64> whiteAttacking;
+    float whiteAttacking=0;
     for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
-        whiteAttacking = whiteAttacking |= whitePiecesPI.at(i).getLegalMoves();
+        whiteAttacking += (float) whitePiecesPI.at(i).getLegalMoves().count();
     }
-    return (float)whiteAttacking.count()/100;
+    return whiteAttacking/100;
 }
 
 const float Bitboards::countMaterial() {
