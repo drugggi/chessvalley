@@ -35,6 +35,7 @@ class Bitboards {
         const float countAttackingSquares();
         std::bitset<64> getLegalMoves(int square);
         std::bitset<64> getLegalMoves(int square, char piece);
+        std::vector<std::pair<int,int> > getLegalMoves(bool whitesTurn);
         std::bitset<64> getAttackingMoves(int square, char piece);
 
         std::bitset<64> getWhiteRookMoves(int square);
@@ -53,13 +54,6 @@ class Bitboards {
         std::bitset<64> getBlackPawnMoves(int square);
         std::bitset<64> getBlackPawnAttackingMoves(int square);
         
-        /*
-        char tPieceRookMovesUp(int square);
-        char getPieceRookMovesRight(int square);
-        char getPieceRookMovesDown(int square);
-        char getPieceRookMovesLeft(int square);
-        */
-
 };
 
 

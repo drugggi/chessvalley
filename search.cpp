@@ -6,117 +6,114 @@
 #include "pieceinfo.h"
 #include "search.h"
 
-Search::Search(std::array<char, 64> charBoard, bool whitesTurn) {
+Search::Search(std::array<char,64> charBoard, bool whitesTurn) {
+    Bitboards evalBoard{charBoard, whitesTurn};
+    eval = evalBoard.countMaterial() + evalBoard.countAttackingSquares();
 
-    evalBoard = new Bitboards{charBoard, whitesTurn};
-    eval = evalBoard->countMaterial() + evalBoard->countAttackingSquares(); 
+    //this means that no move is searched yet
+    moveFrom = 0;
+    moveTo = 0;
+    std::cout << "back to square 1: eval : " << eval << "\n";
+}
 
-    std::cout << "back to square 1: eval: " << eval << "\n";
+Search::Search(std::array<char, 64> charBoard,int from, int to, bool whitesTurn) {
+    /*
+    for (int i = 0 ; i < charBoard.size() ; i++) {
+        std::cout << charBoard[i];
+    }
+    std::cout << "\n";
+    */
+    updateCharBoard(&charBoard,from , to);
+    /*
+    for (int i = 0 ; i < charBoard.size() ; i++) {
+        std::cout << charBoard[i];
+    }
+    */
+    moveFrom = from;
+    moveTo = to;
+
+    Bitboards evalBoard {charBoard, whitesTurn};
+    eval = evalBoard.countMaterial() + evalBoard.countAttackingSquares(); 
 
 }
 Search::~Search() {
 
-    delete evalBoard;
 }
-void Search::evaluateCurrentBoard(std::array<char,64> SQ,bool whitesTurn) {
-
-    std::vector<PieceInfo> blackPieces = evalBoard->getBlackPieces();
-
-    std::array<int,3> moveEval;
-    std::vector<std::array<int,3> > allMoveEvals;
-    std::vector<int> moves;
-
-    for (int i = 0 ; i < blackPieces.size() ; i++) {
-        if (blackPieces.at(i).getLegalMoves().any() ) {
-            moves = blackPieces.at(i).getLegalMoveSquares();
-                
-            std::cout << "\n"<< blackPieces.at(i).getPiece() << "(" <<
-                Chessboard::coordinate(blackPieces.at(i).getSquare() ) << ") -> ";
-            char movingPiece = blackPieces.at(i).getPiece();
-            moveEval[0] = blackPieces.at(i).getSquare();
-            // test moves from starting square to legal squares found in moves
-            for (int j = 0 ; j < moves.size() ; j++) {
-                SQ[moveEval[0] ] = ' ';
-                char tempPiece = SQ[moves.at(j) ];
-                SQ[moves.at(j) ] = movingPiece;
-
-                moveEval[1] = moves.at(j);
-                Bitboards tempBoard {SQ, !whitesTurn};
-               float tempEval = tempBoard.countMaterial() + tempBoard.countAttackingSquares(); 
-               moveEval[2] = 100*tempEval;
-    
-               allMoveEvals.push_back(moveEval);
-                 std::cout << Chessboard::coordinate(moves.at(j) ) << ":(" << tempEval << ") ";
- /*               if (tempEval < bestEval) {
-                    std::cout << " bestEval ";
-                    bestEval = tempEval;
-                    moveFrom = startingSquare;
-                    moveTo = moves.at(j);
-                }
-                */
-                SQ[moveEval[0] ] = movingPiece;
-                SQ[moves.at(j) ] = tempPiece;
-
-            }
-        }
-    }
-    for (auto m : allMoveEvals) {
-
-        std::cout << m[0] << " " << m[1] << " " << m[2] << "\n";
-    }
-
-}
-std::array<char,64> Search::updateCharBoard(std::array<char,64> charBoard, int from, int to) {
-    charBoard[to] = charBoard[from];
-    charBoard[from] = ' ';
-}
-
 void Search::searchNextMoves(std::array<char,64> charBoard, bool whitesTurn) {
-    
-    if (nextMoveSearch.size() != 0) {
-        std::cout << "Searching beyond next moves starts" << "\n";
-        for (int i = 0; i < nextMoveSearch.size() ; i++) {
-           
-            int from = nextMoveSearch.at(i).getMoveFrom();
-            int to = nextMoveSearch.at(i).getMoveTo();
-            std::array<char,64> temp = updateCharBoard(charBoard, from, to);
-            std::cout << "searchnextmovesnext\n";
-            nextMoveSearch.at(i).searchNextMoves(temp, !whitesTurn);
-            std::cout << "searchnextmoveStops\n";
-            //nextMoveSearch.at(i).searchNextMoves(charBoard
-            // if size != search one node deeper
+
+    updateCharBoard(&charBoard,moveFrom, moveTo);
+    Bitboards evalBoard{charBoard, whitesTurn};
+    if ( nextMoveSearch.size() != 0 ) {
+  //      std::cout << "nextmoves already searched! should we go deeper? "<< "\n";
+        
+        //nextMoveSearch.at(0).searchNextMoves(charBoard, !whitesTurn);
+        for (int i = 0 ; i < nextMoveSearch.size() ; i++) {
+        
+        nextMoveSearch.at(i).searchNextMoves(charBoard, !whitesTurn);
         }
+/*
+        for (Search ms: nextMoveSearch) {
+            ms.printSearchInfo();
+        }
+        */
+        
     }
-    // std::cout << "next level search starts!" << "\n";
-
-    std::cout << "trying to create bitboard\n";
-    Bitboards currentBoard {charBoard, whitesTurn};
- //   std::cout << "bitboard created\n";
-    std::vector<PieceInfo> blackPieces = currentBoard.getBlackPieces();
-   // std::cout <<"bitboard created and blackpieces retrieved\n";
-    
-    std::vector<int> moves;
-    int pieceFrom;
-    int pieceTo;
-    float bestEval=100;
-    for (int i = 0; i < blackPieces.size() ; i++) {
-
-        if (blackPieces.at(i).getLegalMoves().any() ) {
-            moves = blackPieces.at(i).getLegalMoveSquares();
-            pieceFrom = blackPieces.at(i).getSquare();
-
-            for (int j = 0; j < moves.size() ; j++) {
-                pieceTo = moves.at(j);
-                Search temp {charBoard, whitesTurn};
-                nextMoveSearch.push_back(temp);
-
-            }
+    else {
+        std::vector<std::pair<int,int> > allMoves = evalBoard.getLegalMoves(whitesTurn);
+        
+ //       std::cout << "nextmovessearch.size() == 0, should do some searching!" << "\n";
+        for (auto pair: allMoves) {
+            
+            Search nextMove{charBoard, pair.first, pair.second, whitesTurn};
+            
+            nextMoveSearch.push_back(nextMove);
 
         }
     }
-//    std::cout <<pieceFrom <<  "next level searching ends" << pieceTo <<  "\n";
 
 
+}
+const void Search::printSearchInfo() {
+    if (nextMoveSearch.size() == 0) {
+    std::cout << Chessboard::coordinate(moveFrom) << "->" << Chessboard::coordinate(moveTo) << "(" << eval << ")  ";
+    }
+    else {
+        std::cout << "nextMoveSearched! print deeper from move:" << Chessboard::coordinate(moveFrom)
+            << "->" << Chessboard::coordinate(moveTo) << "\n";
+        for(Search ms: nextMoveSearch) {
+            ms.printSearchInfo();
+        }
+        std::cout << "\n deep printing done:" << moveFrom << "->" << moveTo << "\n";
+    }
+}
+const void Search::printMoveEvals() {
+    if (moveFrom != 0 && moveTo != 0) {
+        std::cout << Chessboard::coordinate(moveFrom) << "->" 
+            <<Chessboard::coordinate(moveTo) << "  "; 
+    }
+    if (nextMoveSearch.size() == 0) {
+        std::cout << "(" << eval<<")\n";
+    }
+    else {
+        for (Search ms: nextMoveSearch) {
+            ms.printMoveEvals();
+        }
+    }
+
+}
+void Search::updateCharBoard(std::array<char,64> *charBoard, int from, int to) {
+    // there is no move made in root node (initial position for example starting position)
+    if (from == to ) {return; }
+    charBoard->at(to) = charBoard->at(from);
+    charBoard->at(from) = ' ';
+
+    if (charBoard->at(to) == 'P' && to < 8) {
+        std::cout << "automatic promotion, change this in future\n";
+        charBoard->at(to) = 'Q';
+    }
+    else  if ( charBoard->at(to) == 'p' && to > 55 ) {
+       charBoard->at(to) = 'q';
+    } 
 }
 float Search::getEval() {
     if (nextMoveSearch.size() == 0 ) {

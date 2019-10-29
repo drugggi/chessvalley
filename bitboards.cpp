@@ -167,6 +167,46 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         */
     }
 }
+std::vector<std::pair<int,int> > Bitboards::getLegalMoves(bool whitesTurn) {
+
+    std::pair<int,int> moveFromTo;
+    std::vector<std::pair<int,int > > allMoves;
+    std::vector<int> moves;
+    if (whitesTurn) {
+        for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
+            if (whitePiecesPI.at(i).getLegalMoves().any() ) {
+                moves = whitePiecesPI.at(i).getLegalMoveSquares();
+
+                for (int j= 0 ; j < moves.size() ; j++) {
+                    allMoves.push_back(std::make_pair(
+                                whitePiecesPI.at(i).getSquare(), moves.at(j) ) );
+                }
+
+            }
+        }
+
+    }
+    else {
+        for (int i = 0 ; i < blackPiecesPI.size() ; i++) {
+            if (blackPiecesPI.at(i).getLegalMoves().any() ) {
+                moves = blackPiecesPI.at(i).getLegalMoveSquares();
+
+                for (int j= 0 ; j < moves.size() ; j++) {
+                    allMoves.push_back(std::make_pair(
+                                blackPiecesPI.at(i).getSquare(), moves.at(j) ) );
+                }
+
+            }
+        }
+    }
+/*
+    for (auto it: allMoves) {
+        std::cout << it.first << "->" << it.second << "\n";
+    }
+*/
+    return allMoves;
+
+}
 std::vector<PieceInfo> Bitboards::getWhitePieces() {
     return whitePiecesPI;
 }
@@ -195,14 +235,14 @@ const float Bitboards::countWhiteAttackingSquares() {
 }
 
 const float Bitboards::countMaterial() {
-    return countWhiteMaterial() - countBlackMaterial();
+    return countWhiteMaterial() + countBlackMaterial();
 }
 const float Bitboards::countBlackMaterial() {
     float value = 0;
     for (int i = 0 ; i < blackPiecesPI.size() ; i++) {
         value += blackPiecesPI.at(i).getValue();
     }
-    return value;
+    return -1*value;
 }
 const float Bitboards::countWhiteMaterial() {
     float value = 0;

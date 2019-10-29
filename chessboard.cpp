@@ -19,7 +19,12 @@ Chessboard::~Chessboard() {
 void Chessboard::computerTriesToCalculateMoves() {
 
     Search computerThinks{SQ,whitesTurn};
-    computerThinks.evaluateCurrentBoard(SQ,whitesTurn);
+    computerThinks.searchNextMoves(SQ, whitesTurn);
+    computerThinks.searchNextMoves(SQ, whitesTurn);
+    computerThinks.searchNextMoves(SQ, whitesTurn);
+    computerThinks.searchNextMoves(SQ, whitesTurn);
+//    computerThinks.printSearchInfo();
+    computerThinks.printMoveEvals();
     whitesTurn = !whitesTurn;
     /*
     Bitboards currentBoard {SQ, whitesTurn};

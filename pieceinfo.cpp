@@ -75,6 +75,9 @@ std::vector<int> PieceInfo::getLegalMoveSquares() {
 }
 
 void PieceInfo::printLegalMoveCoordinates() {
+    if (legalMoves.any() == false ) {
+        std::cout << " NaN ";
+    }
     for (int i = 0 ; i < legalMoves.size() ; i++) {
         if (legalMoves[i] == 1 ) {
             std::cout << Chessboard::coordinate(i) << " ";
