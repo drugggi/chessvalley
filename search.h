@@ -22,6 +22,11 @@ class Search {
         void updateCharBoard(std::array<char,64> *charBoard, int from, int to);
         const void printSearchInfo();
         const void printMoveEvals();
+        const void printBestEval();
+        void sortResults();
+        bool operator < (const Search& sh) const {
+            return (eval < sh.eval);
+        }
 };
 
 

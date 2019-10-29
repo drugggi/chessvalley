@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <algorithm>
 #include "chessboard.h"
 #include "bitboards.h"
 #include "pieceinfo.h"
@@ -39,10 +40,32 @@ Search::Search(std::array<char, 64> charBoard,int from, int to, bool whitesTurn)
 Search::~Search() {
 
 }
+void Search::sortResults() {
+
+    if (nextMoveSearch.size() != 0) {
+
+        for (int i = 0 ; i < nextMoveSearch.size() ; i++) {
+
+            nextMoveSearch.at(i).sortResults();
+            std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
+        }
+
+        //sortResults();
+        //std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
+        //eval = nextMoveSearch.at(0).getEval();
+        return;
+
+    }
+    else {
+
+        return;
+    
+    }
+}
 void Search::searchNextMoves(std::array<char,64> charBoard, bool whitesTurn) {
 
     updateCharBoard(&charBoard,moveFrom, moveTo);
-    Bitboards evalBoard{charBoard, whitesTurn};
+    // Bitboards evalBoard{charBoard, whitesTurn};
     if ( nextMoveSearch.size() != 0 ) {
   //      std::cout << "nextmoves already searched! should we go deeper? "<< "\n";
         
@@ -59,16 +82,15 @@ void Search::searchNextMoves(std::array<char,64> charBoard, bool whitesTurn) {
         
     }
     else {
+        Bitboards evalBoard{charBoard, whitesTurn};
         std::vector<std::pair<int,int> > allMoves = evalBoard.getLegalMoves(whitesTurn);
         
  //       std::cout << "nextmovessearch.size() == 0, should do some searching!" << "\n";
         for (auto pair: allMoves) {
-            
             Search nextMove{charBoard, pair.first, pair.second, whitesTurn};
-            
             nextMoveSearch.push_back(nextMove);
-
         }
+        // std::sort(nextMoveSearch.begin() , nextMoveSearch.end() );
     }
 
 
@@ -101,6 +123,14 @@ const void Search::printMoveEvals() {
     }
 
 }
+const void Search::printBestEval() {
+
+        for (Search ms: nextMoveSearch) {
+            std::cout << ms.getEval() << "\n";
+        }
+
+
+}
 void Search::updateCharBoard(std::array<char,64> *charBoard, int from, int to) {
     // there is no move made in root node (initial position for example starting position)
     if (from == to ) {return; }
@@ -124,8 +154,15 @@ float Search::getEval() {
     }
 }
 int Search::getMoveFrom() {
+    if (moveFrom == moveTo) {
+        return nextMoveSearch.at(0).getMoveFrom();
+
+    }
     return moveFrom;
 }
 int Search::getMoveTo() {
+    if(moveFrom == moveTo) {
+        return nextMoveSearch.at(0).getMoveTo();
+    }
     return moveTo;
 }

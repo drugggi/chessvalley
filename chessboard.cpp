@@ -24,7 +24,13 @@ void Chessboard::computerTriesToCalculateMoves() {
     computerThinks.searchNextMoves(SQ, whitesTurn);
     computerThinks.searchNextMoves(SQ, whitesTurn);
 //    computerThinks.printSearchInfo();
-    computerThinks.printMoveEvals();
+    computerThinks.sortResults();
+    //computerThinks.printMoveEvals();
+    computerThinks.printBestEval();
+
+    int moveFrom= computerThinks.getMoveFrom();
+    int moveTo =computerThinks.getMoveTo();
+    movePiece(moveFrom, moveTo);
     whitesTurn = !whitesTurn;
     /*
     Bitboards currentBoard {SQ, whitesTurn};
