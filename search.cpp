@@ -43,28 +43,43 @@ Search::~Search() {
 }
 int Search::counter=0;
 int Search::root=0;
+int Search::root2=0;
 
 // when searching opponents turn, we assume that he/she makes the best possible move
 void Search::sortResults(bool whitesTurn) {
 
-    if (nextMoveSearch.size() != 0) {
+
+    if (moveFrom == moveTo) {
+        for (int i = 0; i < nextMoveSearch.size() ; i++) {
+            nextMoveSearch.at(i).sortResults(!whitesTurn);
+            // std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
+        }
+    }
+    else if (nextMoveSearch.size() != 0) {
 
         for (int i = 0 ; i < nextMoveSearch.size() ; i++) {
 
             nextMoveSearch.at(i).sortResults(!whitesTurn);
-            
+
+            for (int j = 0 ; j < nextMoveSearch.size() ; j++) {
+                std::cout << nextMoveSearch.at(j).getEval() << " ";
+            }
+            std::cout << "->";
+            std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
+            for (int j = 0 ; j < nextMoveSearch.size() ; j++) {
+                std::cout << nextMoveSearch.at(j).getEval() << " ";
+            }
+            std::cout << "\n";
             //std::cout << "wT:(" << whitesTurn << ") ";
+            /*
             if (whitesTurn) {
             std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
             } else {
             std::sort(nextMoveSearch.begin(), nextMoveSearch.end(), std::greater<Search>() );
             }
+            */
         }
 
-        //sortResults();
-        //std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
-        //eval = nextMoveSearch.at(0).getEval();
-        return;
 
     }
     else {
@@ -152,17 +167,29 @@ void Search::sortRootEvals() {
 const void Search::printTopTreeRoute() {
 
     if (moveFrom == moveTo) {
+        root = 0;
 
         for (Search sr: nextMoveSearch) {
+           root++;
             sr.printTopTreeRoute();
+            root--;
         }
 
     }
     else {
     if (nextMoveSearch.size() != 0) {
+        root++;
+        if ( root % 2 == 0 ) {
         std::cout << Chessboard::coordinate(moveFrom) << "->" << Chessboard::coordinate(moveTo)
           << "  " ;
         nextMoveSearch.at(0).printTopTreeRoute();
+        } else {
+
+        std::cout << Chessboard::coordinate(moveFrom) << "->" << Chessboard::coordinate(moveTo)
+          << "  " ;
+        nextMoveSearch.at(nextMoveSearch.size() - 1).printTopTreeRoute();
+        }
+        root--;
 
     }
     else {
@@ -200,11 +227,27 @@ void Search::updateCharBoard(std::array<char,64> *charBoard, int from, int to) {
     } 
 }
 const float Search::getEval() {
+    if (moveFrom == moveTo) {
+        root2 = 0;
+    }
     if (nextMoveSearch.size() == 0 ) {
         return eval;
     }
     else {
         return nextMoveSearch.at(0).getEval();
+        /*
+        if ( root2 % 2 == 0 ) {
+            root2++;
+            return nextMoveSearch.at(0).getEval();
+            root2--;
+        }
+        // best move from white is at the bottom
+        else {
+            root2++;
+            return nextMoveSearch.at(nextMoveSearch.size() -1).getEval();
+            root2--;
+        }
+        */
     }
 }
 int Search::getMoveFrom() {
@@ -220,7 +263,31 @@ int Search::getMoveTo() {
     }
     return moveTo;
 }
+void Search::sortLeafs() {
 
+    if (moveFrom == moveTo) {
+
+        for (Search ms: nextMoveSearch) {
+            root++;
+            ms.sortLeafs();
+            root--;
+        }
+    }
+    else {
+        if (nextMoveSearch.size() == 0) {
+            return;
+        }
+        else {
+            for (int i = 0 ; i < nextMoveSearch.size() ; i++) {
+                root++;
+                nextMoveSearch.at(i).sortLeafs();
+                root--;
+                std::cout << "R("<<root<< " " << eval << ")";
+            std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
+            }
+        }
+    }
+}
 const void Search::printSearchTree() {
     // root
     if (moveFrom == moveTo ) {
