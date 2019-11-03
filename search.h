@@ -14,7 +14,7 @@ class Search {
     public:
         static int counter;
         static int root;
-        static int root2;
+ //       static int root2;
         Search(std::array<char,64> charBoard, bool whitesTurn);
         Search(std::array<char,64> charBoard,int from, int to, bool whitesTurn);
         ~Search();

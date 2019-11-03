@@ -43,7 +43,7 @@ Search::~Search() {
 }
 int Search::counter=0;
 int Search::root=0;
-int Search::root2=0;
+//int Search::root2=0;
 
 // when searching opponents turn, we assume that he/she makes the best possible move
 void Search::sortResults(bool whitesTurn) {
@@ -264,7 +264,7 @@ void Search::updateCharBoard(std::array<char,64> *charBoard, int from, int to) {
 }
 const float Search::getEval() {
     if (moveFrom == moveTo) {
-        root2 = 0;
+        //root2 = 0;
     }
     if (nextMoveSearch.size() == 0 ) {
         return eval;
