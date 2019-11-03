@@ -35,7 +35,7 @@ void Chessboard::computerTriesToCalculateMoves() {
     //computerThinks.printMoveEvals();
     //std::cout << "print most optimal for both colors" << "\n";
     //computerThinks.printTopTreeRoute();
-    //computerThinks.printBaseEvals();
+    computerThinks.printBaseEvals();
     //computerThinks.printBestEval();
 
     std::cout << "counter" << computerThinks.counter << "\n";

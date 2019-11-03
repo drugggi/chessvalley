@@ -16,30 +16,20 @@ Search::Search(std::array<char,64> charBoard, bool whitesTurn) {
     std::cout << "back to square 1: eval : " << eval << "\n";
 }
 
+// One Search represents a chess move, whis is made in charBoard
 Search::Search(std::array<char, 64> charBoard,int from, int to, bool whitesTurn) {
-    /*
-    for (int i = 0 ; i < charBoard.size() ; i++) {
-        std::cout << charBoard[i];
-    }
-    std::cout << "\n";
-    */
     updateCharBoard(&charBoard,from , to);
-    /*
-    for (int i = 0 ; i < charBoard.size() ; i++) {
-        std::cout << charBoard[i];
-    }
-    */
     moveFrom = from;
     moveTo = to;
 
     counter++;
+    // with Bitboards we get legal moves and some intelligence
     Bitboards evalBoard {charBoard, whitesTurn};
     eval = evalBoard.countMaterial() + evalBoard.countAttackingSquares(); 
 
 }
 Search::~Search() {
-
-    //counter--;
+    counter--;
 }
 int Search::counter=0;
 int Search::root=0;
@@ -48,7 +38,6 @@ int Search::root=0;
 // when searching opponents turn, we assume that he/she makes the best possible move
 void Search::sortResults(bool whitesTurn) {
 
-
     if (moveFrom == moveTo) {
         for (int i = 0; i < nextMoveSearch.size() ; i++) {
             nextMoveSearch.at(i).sortResults(!whitesTurn);
@@ -56,9 +45,7 @@ void Search::sortResults(bool whitesTurn) {
         }
     }
     else if (nextMoveSearch.size() != 0) {
-
         for (int i = 0 ; i < nextMoveSearch.size() ; i++) {
-
             nextMoveSearch.at(i).sortResults(!whitesTurn);
 
             /*
@@ -83,40 +70,26 @@ void Search::sortResults(bool whitesTurn) {
             }
             */
         }
-
-
     }
     else {
-
+        // just return when end of search tree, nothing to sort
         return;
-    
     }
 }
 void Search::searchNextMoves(std::array<char,64> charBoard, bool whitesTurn) {
 
+    // calling this method again and again we have to update board repreentation
     updateCharBoard(&charBoard,moveFrom, moveTo);
     // Bitboards evalBoard{charBoard, whitesTurn};
     if ( nextMoveSearch.size() != 0 ) {
-  //      std::cout << "nextmoves already searched! should we go deeper? "<< "\n";
-        
-        //nextMoveSearch.at(0).searchNextMoves(charBoard, !whitesTurn);
         for (int i = 0 ; i < nextMoveSearch.size() ; i++) {
-        
         nextMoveSearch.at(i).searchNextMoves(charBoard, !whitesTurn);
         }
-
-/*
-        for (Search ms: nextMoveSearch) {
-            ms.printSearchInfo();
-        }
-        */
-        
     }
     else {
+        // getting all the legal moves and searching them
         Bitboards evalBoard{charBoard, whitesTurn};
         std::vector<std::pair<int,int> > allMoves = evalBoard.getLegalMoves(whitesTurn);
-        
- //       std::cout << "nextmovessearch.size() == 0, should do some searching!" << "\n";
         for (auto pair: allMoves) {
             Search nextMove{charBoard, pair.first, pair.second, whitesTurn};
             nextMoveSearch.push_back(nextMove);
@@ -133,6 +106,8 @@ void Search::searchNextMoves(std::array<char,64> charBoard, bool whitesTurn) {
         }
         eval = bestEval;
         */
+            // sorting just searched moves, and setting "base" eval to 
+            // either best white's or black's move
             std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
             if (!whitesTurn) {
                 eval = nextMoveSearch.at(0).getEval();
@@ -193,6 +168,7 @@ void Search::sortRootEvals() {
     */
 
 }
+/*
 const void Search::printTopTreeRoute() {
 
     if (moveFrom == moveTo) {
@@ -228,6 +204,7 @@ const void Search::printTopTreeRoute() {
     }
     }
 }
+*/
 const void Search::printBestEval() {
 
     float bestEval = nextMoveSearch.at(0).getEval();
@@ -244,7 +221,8 @@ const void Search::printBestEval() {
 const void Search::printBaseEvals() {
 
     for (Search sh: nextMoveSearch) {
-        std::cout << sh.getMoveFrom() << "->" << sh.getMoveTo() << "(" << sh.getEval() << ")\n";
+        std::cout << Chessboard::coordinate(sh.getMoveFrom() ) << "->" << 
+            Chessboard::coordinate(sh.getMoveTo() ) << "(" << sh.getRealEval() << ")  ";
     }
 
 }
@@ -261,6 +239,9 @@ void Search::updateCharBoard(std::array<char,64> *charBoard, int from, int to) {
     else  if ( charBoard->at(to) == 'p' && to > 55 ) {
        charBoard->at(to) = 'q';
     } 
+}
+const float Search::getRealEval() {
+    return eval;
 }
 const float Search::getEval() {
     if (moveFrom == moveTo) {
