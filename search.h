@@ -20,8 +20,8 @@ class Search {
         ~Search();
         void searchNextMoves(std::array<char,64> charBoard, bool whitesTurn);
         const float getEval();
-        int getMoveFrom();
-        int getMoveTo();
+        const int getMoveFrom();
+        const int getMoveTo();
         void updateCharBoard(std::array<char,64> *charBoard, int from, int to);
         const void printSearchInfo();
         const void printMoveEvals();
@@ -29,7 +29,7 @@ class Search {
         const void printSearchTree();
         const void printTopTreeRoute();
         const void printBaseEvals();
-        void sortLeafs();
+        //void sortLeafs();
         void sortResults(bool whitesTurn);
         void sortRootEvals();
         bool operator < (const Search& sh) const {

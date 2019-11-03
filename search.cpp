@@ -286,7 +286,7 @@ const float Search::getEval() {
         */
     }
 }
-int Search::getMoveFrom() {
+const int Search::getMoveFrom() {
     if (moveFrom == moveTo) {
         return nextMoveSearch.at(0).getMoveFrom();
         //return nextMoveSearch.at(nextMoveSearch.size() - 1).getMoveFrom();
@@ -294,14 +294,14 @@ int Search::getMoveFrom() {
     }
     return moveFrom;
 }
-int Search::getMoveTo() {
+const int Search::getMoveTo() {
     if(moveFrom == moveTo) {
         return nextMoveSearch.at(0).getMoveTo();
         //return nextMoveSearch.at(nextMoveSearch.size() - 1).getMoveTo();
     }
     return moveTo;
 }
-void Search::sortLeafs() {
+/* void Search::sortLeafs() {
 
     if (moveFrom == moveTo) {
 
@@ -326,6 +326,7 @@ void Search::sortLeafs() {
         }
     }
 }
+*/
 const void Search::printSearchTree() {
     // root
     if (moveFrom == moveTo ) {
