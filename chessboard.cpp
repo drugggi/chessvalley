@@ -22,21 +22,21 @@ void Chessboard::computerTriesToCalculateMoves() {
     computerThinks.searchNextMoves(SQ, whitesTurn);
     computerThinks.searchNextMoves(SQ, whitesTurn);
    computerThinks.searchNextMoves(SQ, whitesTurn);
-   // computerThinks.searchNextMoves(SQ, whitesTurn);
+    //computerThinks.searchNextMoves(SQ, whitesTurn);
     //computerThinks.searchNextMoves(SQ, whitesTurn);
 //    computerThinks.printSearchInfo();
 
-    computerThinks.printSearchTree();
+   // computerThinks.printSearchTree();
     computerThinks.sortResults(!whitesTurn);
     //computerThinks.sortLeafs();
-    //computerThinks.sortRootEvals();
-   
-    
-    computerThinks.printSearchTree();
+    //computerThinks.printSearchTree();
+    computerThinks.sortRootEvals();
+   // computerThinks.printSearchTree();
     //computerThinks.printMoveEvals();
-    std::cout << "print most optimal for both colors" << "\n";
-    computerThinks.printTopTreeRoute();
-    computerThinks.printBestEval();
+    //std::cout << "print most optimal for both colors" << "\n";
+    //computerThinks.printTopTreeRoute();
+    //computerThinks.printBaseEvals();
+    //computerThinks.printBestEval();
 
     std::cout << "counter" << computerThinks.counter << "\n";
     

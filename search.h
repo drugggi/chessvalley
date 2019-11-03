@@ -28,6 +28,7 @@ class Search {
         const void printBestEval();
         const void printSearchTree();
         const void printTopTreeRoute();
+        const void printBaseEvals();
         void sortLeafs();
         void sortResults(bool whitesTurn);
         void sortRootEvals();
