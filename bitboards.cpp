@@ -6,26 +6,9 @@
 #include "pieceinfo.h"
 #include "chessboard.h"
 
-Bitboards::Bitboards(std::vector<PieceInfo> wpPI, std::vector<PieceInfo> bpPI, bool whiteToMove) {
-
-    if (whiteToMove) {
-        std::cout << "new bitboards constructor, white to move" << "\n";
-    } else {
-        std::cout << "new bitboard constructor, black to move" << "\n";
-    }
-
-}
-
 Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
     charBoard = pieceBoard;
-/*    
-    if(whiteToMove) {
-        std::cout << "it is white's turn" << "\n";
-    } else {
-        std::cout << "it is black's turn" << "\n";
-    }
-*/
-    // create bitboards for white/black pieces from char board
+
     for (int i = 0; i < 64 ; i++ ) {
         whitePieces[i] = 0;
         blackPieces[i] = 0;
@@ -42,26 +25,22 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         }
     }
 
-    // get attacking moves, which helps to get legal moves when king is in check
+    // populate vector which has pieceinfo, consider doint this earlier, and only
+    // setting legal moves here, which needs to know where black/white pieces are at the board
     for (int i = 0 ; i < pieceBoard.size() ; i++) {
         if (pieceBoard.at(i) != ' ') {
             PieceInfo temp {pieceBoard.at(i) , i };
             if ((int)pieceBoard.at(i) < (int)'a') {
-                
-               // whiteAttacking = whiteAttacking |= getAttackingMoves(i,pieceBoard.at(i) );
-               
                temp.setLegalMoves( getAttackingMoves(temp.getSquare(),temp.getPiece() ) );
                whitePiecesPI.push_back(temp);
             }
             else {
-               // blackAttacking = blackAttacking |= getAttackingMoves(i,pieceBoard.at(i) );
                 temp.setLegalMoves( getAttackingMoves(temp.getSquare(),temp.getPiece() ) );
                 blackPiecesPI.push_back(temp);
             }
         }
        
     }
-//    std::cout << "white to move: " << whiteToMove << "\n";
     if (whiteToMove) {
         // create bitboards for whitePieces and blackPieces 
         std::bitset<64> tempPiecemoves;
@@ -140,33 +119,8 @@ Bitboards::Bitboards(std::array<char,64> pieceBoard, bool whiteToMove) {
         }
 
     }
-    
-    std::bitset<64> tempLegalmoves;
-    if (whiteToMove) {
-    for (int i = 0; i < whitePiecesPI.size() ; i++  ) {
-        tempLegalmoves = tempLegalmoves |= whitePiecesPI.at(i).getLegalMoves();
-//        whitePiecesPI.at(i).printPieceInfo();
-    }
-    } else {
-    for (int i = 0; i < blackPiecesPI.size() ; i++) {
-        tempLegalmoves = tempLegalmoves |= blackPiecesPI.at(i).getLegalMoves();
- //       blackPiecesPI.at(i).printPieceInfo();
-    }
-    }
-  //  printBitboard(tempLegalmoves);
-    if ( tempLegalmoves.any() == false ) {
-        //std::cout << "no legal moves" << "\n";
-    
-        if ( isBlackKingInCheck() ||isWhiteKingInCheck() ) {
-            std::cout << "king in check" << "";
-         }
-        /*
-        std::string eof;
-        std::cout << "press anything to crash the chessvalley"  << "\n";
-        std::cin >> eof;
-        */
-    }
 }
+
 std::vector<std::pair<int,int> > Bitboards::getLegalMoves(bool whitesTurn) {
 
     std::pair<int,int> moveFromTo;
@@ -199,11 +153,6 @@ std::vector<std::pair<int,int> > Bitboards::getLegalMoves(bool whitesTurn) {
             }
         }
     }
-/*
-    for (auto it: allMoves) {
-        std::cout << it.first << "->" << it.second << "\n";
-    }
-*/
     return allMoves;
 
 }
@@ -213,6 +162,7 @@ std::vector<PieceInfo> Bitboards::getWhitePieces() {
 std::vector<PieceInfo> Bitboards::getBlackPieces() {
     return blackPiecesPI;
 }
+// bunch of easy to calculate info for ai to make a non blundering move
 const float Bitboards::countAttackingSquares() {
     return countWhiteAttackingSquares() + countBlackAttackingSquares();
 }
@@ -251,6 +201,9 @@ const float Bitboards::countWhiteMaterial() {
     }
     return value;
 }
+// the way we check if black/white king is in check, thus making some moves illegal
+// is, we start where king is and check if rook/bishop/knight/pawn moves backwards and if
+// there is opposite color rook/bishop/knight/pawn/queen then king must be in check
 bool Bitboards::isBlackKingInCheck() {
 
     int square;
@@ -455,7 +408,6 @@ bool Bitboards::isWhiteKingInCheck() {
     int rank = square / 8;
     // lets check rook like moves and if there is black rook or queen there 
     for (int i = file+1 ; i < 8 ; i++ ) {
-       // std::cout << "looking square:" << (rank*8+i) << " there is: " << charBoard[rank*8+i]<< "\n";
         if (charBoard[rank*8+i] != ' ') {
             if (charBoard[rank*8+i] == 'r' ||charBoard[rank*8+i] == 'q') {
                 return true;
@@ -467,7 +419,6 @@ bool Bitboards::isWhiteKingInCheck() {
     }
     // look to the left
     for (int i = file - 1 ; i >= 0 ; i-- ) {
-       // std::cout << "looking square:" << (rank*8+i) << " there is: " << charBoard[rank*8+i]<< "\n";
         if (charBoard[rank*8+i] != ' ') {
             if (charBoard[rank*8+i] == 'r' ||charBoard[rank*8+i] == 'q') {
                 return true;
@@ -492,7 +443,6 @@ bool Bitboards::isWhiteKingInCheck() {
     }
     // look up
     for (int i = rank - 1 ; i >= 0 ; i-- ) {
-      //  std::cout << "looking square:" << (i*8+file) << " there is: " << charBoard[i*8+file]<< "\n";
         if (charBoard[i*8+file] != ' ') {
             if (charBoard[i*8+file] == 'r' ||charBoard[i*8+file] == 'q') {
                 return true;
@@ -632,10 +582,6 @@ bool Bitboards::isWhiteKingInCheck() {
     }
     return false;
 }
-
-
-
-
 std::bitset<64> Bitboards::getAttackingMoves(int square, char piece) {
 
     switch(piece) {
@@ -666,7 +612,6 @@ std::bitset<64> Bitboards::getAttackingMoves(int square, char piece) {
         default:
 
             std::bitset<64> empty;
-            //std::cout << "ups";
             return empty;
     }
 }
@@ -690,13 +635,6 @@ std::bitset<64> Bitboards::getLegalMoves(int square) {
 // This is used inside bitboards, probably should be private, does not guarantee that 
 // every move ginven this method is really legal
 std::bitset<64> Bitboards::getLegalMoves(int square, char piece) {
-/*
-    for (int i = 0 ; i < whitePiecesPI.size() ; i++) {
-        if (whitePiecesPI.at(i).getPiece() == piece) {
-            return whitePiecesPI.at(i).getLegalMoves();
-        }
-    }
-   */ 
     switch(piece) {
         case 'R':
             return getWhiteRookMoves(square);
@@ -725,7 +663,6 @@ std::bitset<64> Bitboards::getLegalMoves(int square, char piece) {
         default:
 
             std::bitset<64> empty;
-            //std::cout << "ups";
             return empty;
     }
     
@@ -845,7 +782,6 @@ std::bitset<64> Bitboards::getBlackKnightMoves(int square) {
     int file = square % 8;
     int rank = square / 8;
 
-    //std::cout << "file: " << file << " rank: " << rank << "\n";
     // check the knight moves clockwise
     rank = rank - 2;
     file++;
@@ -892,7 +828,6 @@ std::bitset<64> Bitboards::getWhiteKnightMoves(int square) {
     int file = square % 8;
     int rank = square / 8;
 
-    //std::cout << "file: " << file << " rank: " << rank << "\n";
     // check the knight moves clockwise
     rank = rank - 2;
     file++;
@@ -1089,7 +1024,6 @@ std::bitset<64> Bitboards::getWhiteBishopMoves(int square) {
 
 }
 
-// Remember to remove squres that white is attacking
 std::bitset<64> Bitboards::getBlackKingMoves(int square) {
 
     std::bitset<64> blackKingMoves;
@@ -1131,7 +1065,6 @@ std::bitset<64> Bitboards::getBlackKingMoves(int square) {
     }
     return blackKingMoves;
 }
-// Remember to remove squares that black is attacking
 std::bitset<64> Bitboards::getWhiteKingMoves(int square) {
 
     std::bitset<64> whiteKingMoves;
