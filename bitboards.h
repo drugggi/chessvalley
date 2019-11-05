@@ -17,8 +17,8 @@ class Bitboards {
 
         std::vector<PieceInfo> whitePiecesPI;
         std::vector<PieceInfo> blackPiecesPI;
-       bool whiteKingCheck = false;
-       bool blackKingCheck = false;
+       //bool whiteKingCheck = false;
+       //bool blackKingCheck = false;
     public:
         Bitboards(std::array<char,64> SQ,bool whiteToMove);
         Bitboards(std::vector<PieceInfo> wpPI, std::vector<PieceInfo> bpPI,bool whiteToMove);
