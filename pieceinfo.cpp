@@ -41,9 +41,9 @@ void PieceInfo::setSquare(int newSquare) {
 void PieceInfo::setLegalMoves(std::bitset<64> lm) {
     legalMoves = lm;
 }
-
+// this is mainly for removing moves that would result in your own king in check
+// thus making the move illegal
 void PieceInfo::setLegalMove(int moveSquare, bool allowed) {
-//    std::cout << piece << Chessboard::coordinate(moveSquare) << " reverted\n";
     if (allowed) {
         legalMoves[moveSquare] = 1;
     }
@@ -60,7 +60,6 @@ void PieceInfo::printPieceInfo() {
     std::cout << piece << "(" << Chessboard::coordinate(square) << ") -> ";
     printLegalMoveCoordinates();
     std::cout << " | ";
-//    std::cout << "\n";
 }
 
 std::vector<int> PieceInfo::getLegalMoveSquares() {

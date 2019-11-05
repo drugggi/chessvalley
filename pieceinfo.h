@@ -10,6 +10,7 @@ class PieceInfo {
         char piece;
         int square;
         std::bitset<64> legalMoves;
+        std::vector<std::pair<int,int> > legalMoves2;
         float value;
 
     public:
