@@ -19,6 +19,7 @@ class Search {
         Search(std::array<char,64> charBoard,int from, int to, bool whitesTurn);
         ~Search();
         void searchNextMoves(std::array<char,64> charBoard, bool whitesTurn);
+        void searchNextMovesIntelligently(std::array<char,64> charBoard, bool whitesTurn);
         const float getEval();
         const float getRealEval();
         const int getMoveFrom();

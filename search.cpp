@@ -86,6 +86,40 @@ void Search::searchNextMoves(std::array<char,64> charBoard, bool whitesTurn) {
 
 
 }
+void Search::searchNextMovesIntelligently(std::array<char,64> charBoard, bool whitesTurn) {
+
+    // calling this method again and again we have to update board repreentation
+    updateCharBoard(&charBoard,moveFrom, moveTo);
+    // Bitboards evalBoard{charBoard, whitesTurn};
+    if ( nextMoveSearch.size() != 0 ) {
+        for (int i = 0 ; i < nextMoveSearch.size() ; i++) {
+            nextMoveSearch.at(i).searchNextMoves(charBoard, !whitesTurn);
+            //if ( i > 1 ) { std::cout << "break! " << "\n"; break; }
+        }
+    }
+    else {
+        // getting all the legal moves and searching them
+        Bitboards evalBoard{charBoard, whitesTurn};
+        std::vector<std::pair<int,int> > allMoves = evalBoard.getLegalMoves(whitesTurn);
+        for (auto pair: allMoves) {
+            Search nextMove{charBoard, pair.first, pair.second, whitesTurn};
+            nextMoveSearch.push_back(nextMove);
+        }
+        
+        if (nextMoveSearch.size() != 0) {
+            // sorting just searched moves, and setting "base" eval to 
+            // either best white's or black's move
+            std::sort(nextMoveSearch.begin(), nextMoveSearch.end() );
+            if (!whitesTurn) {
+                eval = nextMoveSearch.at(0).getEval();
+            } else {
+                eval = nextMoveSearch.at(nextMoveSearch.size() - 1).getEval();
+            }
+        }
+    }
+
+
+}
 const void Search::printSearchInfo() {
     if (nextMoveSearch.size() == 0) {
     std::cout << Chessboard::coordinate(moveFrom) << "->" << Chessboard::coordinate(moveTo) << "(" << eval << ")  ";

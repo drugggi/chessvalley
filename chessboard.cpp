@@ -21,7 +21,8 @@ void Chessboard::computerTriesToCalculateMoves() {
     Search computerThinks{SQ,whitesTurn};
     computerThinks.searchNextMoves(SQ, whitesTurn);
     computerThinks.searchNextMoves(SQ, whitesTurn);
-   computerThinks.searchNextMoves(SQ, whitesTurn);
+   computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
+   //computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
     //computerThinks.searchNextMoves(SQ, whitesTurn);
     //computerThinks.searchNextMoves(SQ, whitesTurn);
 //    computerThinks.printSearchInfo();
