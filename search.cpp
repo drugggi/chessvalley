@@ -13,10 +13,9 @@ Search::Search(std::array<char,64> charBoard, bool whitesTurn) {
 
     //this means that no move is searched yet
     counter++;
-    std::cout << "back to square 1: eval : " << eval << "\n";
 }
 
-// One Search represents a chess move, whis is made in charBoard
+// One Search represents a chess move, which is made in charBoard
 Search::Search(std::array<char, 64> charBoard,int from, int to, bool whitesTurn) {
     updateCharBoard(&charBoard,from , to);
     moveFrom = from;
@@ -93,8 +92,21 @@ void Search::searchNextMovesIntelligently(std::array<char,64> charBoard, bool wh
     // Bitboards evalBoard{charBoard, whitesTurn};
     if ( nextMoveSearch.size() != 0 ) {
         for (int i = 0 ; i < nextMoveSearch.size() ; i++) {
-            nextMoveSearch.at(i).searchNextMoves(charBoard, !whitesTurn);
-            //if ( i > 1 ) { std::cout << "break! " << "\n"; break; }
+            float bestEval;
+            if (whitesTurn == false) {
+                bestEval = nextMoveSearch.at(0).getRealEval(); }
+            else {
+                bestEval = nextMoveSearch.at(nextMoveSearch.size() -1 ).getRealEval();
+            }
+            float currentEval = nextMoveSearch.at(i).getRealEval();
+            // nextMoveSearch.at(i).searchNextMovesIntelligently(charBoard, !whitesTurn);
+            // if move is horrible (eval is too far from best move) dont search further
+            if ( (bestEval - currentEval ) > 1 || (bestEval - currentEval ) < -1 ) {
+                        std::cout << "brk!(" <<bestEval << "/"  << currentEval <<  ")["
+                            << i << "/" << nextMoveSearch.size() - 1 << "]\n";
+                        break;
+            }
+            nextMoveSearch.at(i).searchNextMovesIntelligently(charBoard, !whitesTurn);
         }
     }
     else {
@@ -119,6 +131,49 @@ void Search::searchNextMovesIntelligently(std::array<char,64> charBoard, bool wh
     }
 
 
+}
+const void Search::printTreeBranchInfo(std::vector<std::pair<int,int> > *searchTree) {
+
+    for (int i = 0 ; i < searchTree->size() ; i++) {
+        std::cout << "root: " << i << " b/l " << searchTree->at(i).first << "/"
+            << searchTree->at(i).second << "\n";
+    }
+
+
+}
+const void Search::collectTreeBranchInfo(std::vector<std::pair<int,int> > *searchTree) {
+
+    if (searchTree->size() == 0 ) {
+        root = 0;
+        std::cout << "at root zero, we are counting\n";
+    }
+    std::pair<int,int> branchInfo={0,0};
+    for (Search sh: nextMoveSearch) {
+        if (sh.isLeaf() == false) {
+            branchInfo.first++;
+        } else {
+            branchInfo.second++;
+        }
+    }
+    if ( searchTree->size() == root ) {
+        searchTree->push_back(branchInfo);
+    } else {
+        searchTree->at(root).first += branchInfo.first;
+        searchTree->at(root).second += branchInfo.second;
+    }
+    for (Search sh: nextMoveSearch) {
+        root++;
+        sh.collectTreeBranchInfo(searchTree);
+    }
+    root--;
+
+}
+const bool Search::isLeaf() {
+    if (nextMoveSearch.size() == 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 const void Search::printSearchInfo() {
     if (nextMoveSearch.size() == 0) {
@@ -222,7 +277,7 @@ const void Search::printSearchTree() {
     if (moveFrom == moveTo ) {
         
         for (Search ms: nextMoveSearch) {
-            std::cout << "   next root move: this eval: "<< eval << "\n";
+            // std::cout << "   next root move: this eval: "<< eval << "\n";
             root++;
             ms.printSearchTree();
             root--;

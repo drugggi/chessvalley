@@ -20,6 +20,7 @@ class Search {
         ~Search();
         void searchNextMoves(std::array<char,64> charBoard, bool whitesTurn);
         void searchNextMovesIntelligently(std::array<char,64> charBoard, bool whitesTurn);
+        const bool isLeaf();
         const float getEval();
         const float getRealEval();
         const int getMoveFrom();
@@ -29,6 +30,8 @@ class Search {
         const void printMoveEvals();
         const void printBestEval();
         const void printSearchTree();
+        const void collectTreeBranchInfo(std::vector<std::pair<int,int> > *searchTree);
+        const void printTreeBranchInfo(std::vector<std::pair<int,int> > *searchTree);
         const void printTopTreeRoute();
         const void printBaseEvals();
         //void sortLeafs();

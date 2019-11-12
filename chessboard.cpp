@@ -21,25 +21,24 @@ void Chessboard::computerTriesToCalculateMoves() {
     Search computerThinks{SQ,whitesTurn};
     computerThinks.searchNextMoves(SQ, whitesTurn);
     computerThinks.searchNextMoves(SQ, whitesTurn);
+    //computerThinks.searchNextMoves(SQ, whitesTurn);
+   computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
    computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
    //computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
-    //computerThinks.searchNextMoves(SQ, whitesTurn);
-    //computerThinks.searchNextMoves(SQ, whitesTurn);
-//    computerThinks.printSearchInfo();
+   //computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
+   // print something representing tree search, and which branch is searched the furthest
 
-   // computerThinks.printSearchTree();
+   std::vector<std::pair<int,int> > searchInfo;
+   computerThinks.collectTreeBranchInfo(&searchInfo);
+   computerThinks.printTreeBranchInfo(&searchInfo);
+   std::cout << "SIZE: " << searchInfo.size() << "\n";
     computerThinks.sortResults(!whitesTurn);
-    //computerThinks.sortLeafs();
-    //computerThinks.printSearchTree();
     computerThinks.sortRootEvals();
-   // computerThinks.printSearchTree();
+    //computerThinks.printSearchTree();
     //computerThinks.printMoveEvals();
-    //std::cout << "print most optimal for both colors" << "\n";
     //computerThinks.printTopTreeRoute();
     computerThinks.printBaseEvals();
-    //computerThinks.printBestEval();
-
-    std::cout << "counter" << computerThinks.counter << "\n";
+    std::cout << "counter: " << computerThinks.counter << "\n";
     
     int moveFrom= computerThinks.getMoveFrom();
     int moveTo =computerThinks.getMoveTo();
