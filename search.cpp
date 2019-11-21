@@ -6,6 +6,7 @@
 #include "bitboards.h"
 #include "pieceinfo.h"
 #include "search.h"
+#include "evaluate.h"
 
 Search::Search(std::array<char,64> charBoard, bool whitesTurn) {
     Bitboards evalBoard{charBoard, whitesTurn};

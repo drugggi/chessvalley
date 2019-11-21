@@ -21,25 +21,28 @@ void Chessboard::computerTriesToCalculateMoves() {
     Search computerThinks{SQ,whitesTurn};
     computerThinks.searchNextMoves(SQ, whitesTurn);
     computerThinks.searchNextMoves(SQ, whitesTurn);
-    //computerThinks.searchNextMoves(SQ, whitesTurn);
-   computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
+    computerThinks.searchNextMoves(SQ, whitesTurn);
+    std::string command;
+   /* 
+   std::vector<std::pair<int,int> > searchInfo;
+    while (command != "q") {
    computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
    //computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
    //computerThinks.searchNextMovesIntelligently(SQ, whitesTurn);
    // print something representing tree search, and which branch is searched the furthest
+   std::cin >> command;
+    }
 
-   std::vector<std::pair<int,int> > searchInfo;
    computerThinks.collectTreeBranchInfo(&searchInfo);
    computerThinks.printTreeBranchInfo(&searchInfo);
-   std::cout << "SIZE: " << searchInfo.size() << "\n";
+   */
     computerThinks.sortResults(!whitesTurn);
     computerThinks.sortRootEvals();
     //computerThinks.printSearchTree();
-    //computerThinks.printMoveEvals();
-    //computerThinks.printTopTreeRoute();
+    computerThinks.printMoveEvals();
     computerThinks.printBaseEvals();
     std::cout << "counter: " << computerThinks.counter << "\n";
-    
+
     int moveFrom= computerThinks.getMoveFrom();
     int moveTo =computerThinks.getMoveTo();
     movePiece(moveFrom, moveTo);
